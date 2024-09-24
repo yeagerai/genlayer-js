@@ -1,0 +1,54 @@
+{
+  "name": "genlayer-js",
+  "type": "module",
+  "version": "0.0.1",
+  "description": "GenLayer JavaScript SDK",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsup src/index.ts src/chains/index.ts --format cjs,esm --dts --splitting --out-dir dist --no-treeshake",
+    "build:watch": "tsup src/index.ts src/chains/index.ts src/types/index.ts --format cjs,esm --dts --splitting --out-dir dist --no-treeshake --watch",
+    "test": "vitest",
+    "test:watch": "vitest --watch",
+    "lint": "eslint . --ext .ts",
+    "prepublishOnly": "npm run build && npm run test"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    },
+    "./chains": {
+      "import": "./dist/chains/index.js",
+      "require": "./dist/chains/index.js"
+    },
+    "./types": {
+      "import": "./dist/types/index.js",
+      "require": "./dist/types/index.js"
+    }
+  },
+  "keywords": [],
+  "author": "GenLayer",
+  "license": "MIT",
+  "devDependencies": {
+    "@release-it/conventional-changelog": "^8.0.2",
+    "@types/jest": "^29.5.13",
+    "@types/node": "^22.5.5",
+    "@typescript-eslint/eslint-plugin": "^8.5.0",
+    "@typescript-eslint/parser": "^8.5.0",
+    "cross-env": "^7.0.3",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-import-resolver-typescript": "^3.6.3",
+    "prettier": "^3.3.3",
+    "release-it": "^17.6.0",
+    "ts-node": "^10.9.2",
+    "tsup": "^8.2.4",
+    "typescript": "^5.6.2",
+    "vitest": "^2.1.1"
+  },
+  "dependencies": {
+    "eslint-plugin-import": "^2.30.0",
+    "viem": "^2.21.7"
+  }
+}
