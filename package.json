@@ -11,7 +11,7 @@
     "test": "vitest",
     "test:watch": "vitest --watch",
     "lint": "eslint . --ext .ts",
-    "prepublishOnly": "npm run build && npm run test"
+    "release": "release-it --ci"
   },
   "exports": {
     ".": {
