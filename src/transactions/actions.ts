@@ -20,10 +20,7 @@ export const transactionActions = (
     interval?: number;
     retries?: number;
   }): Promise<GenLayerTransaction> => {
-    const transaction = (await client.request({
-      method: "eth_getTransactionByHash",
-      params: [hash],
-    })) as GenLayerTransaction;
+    const transaction = (await client.getTransaction({hash})) as GenLayerTransaction;
 
     if (!transaction) {
       throw new Error("Transaction not found");
@@ -47,12 +44,5 @@ export const transactionActions = (
       interval,
       retries: retries - 1,
     });
-  },
-  getTransactionByHash: async (hash: TransactionHash): Promise<GenLayerTransaction> => {
-    const transaction = (await client.request({
-      method: "eth_getTransactionByHash",
-      params: [hash],
-    })) as GenLayerTransaction;
-    return transaction;
   },
 });

@@ -17,5 +17,4 @@ export type ITransactionActions<
     interval?: number;
     retries?: number;
   }) => Promise<GenLayerTransaction>;
-  getTransactionByHash: (hash: TransactionHash) => Promise<GenLayerTransaction>;
 };
