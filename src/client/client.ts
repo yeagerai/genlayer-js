@@ -16,6 +16,7 @@ interface ClientConfig {
     blockExplorers?: {default: {name: string; url: string}};
   };
   endpoint?: string; // Optional: Custom RPC endpoint override
+  account?: Account;
 }
 
 // Extend Viem client to work with GenLayer-specific chains (simulator, testnet, etc.)
@@ -24,13 +25,11 @@ export const createClient = (config: ClientConfig = {chain: simulator}) => {
   const chainConfig = config.chain || simulator;
   const rpcUrl = config.endpoint || chainConfig.rpcUrls.default.http[0];
 
-  const account = createAccount();
-
   // Create a Viem client connected to the GenLayer Simulator (or custom chain)
   const baseClient = createViemClient({
     chain: chainConfig,
     transport: http(rpcUrl),
-    account,
+    ...(config.account ? {account: config.account} : {}),
   })
     .extend(publicActions)
     .extend(client => accountActions(client as unknown as GenLayerClient<Transport, SimulatorChain, Account>))

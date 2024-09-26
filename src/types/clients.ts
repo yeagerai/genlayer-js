@@ -1,5 +1,5 @@
 import {Account, Transport, Client} from "viem";
-import {TransactionHash} from "./transactions";
+import {GenLayerTransaction, TransactionHash} from "./transactions";
 import {SimulatorChain} from "./chains";
 import {Address} from "./accounts";
 
@@ -21,6 +21,18 @@ export type GenLayerClient<
       args: Extract<GenLayerMethod, {method: TMethod["method"]}>,
     ): Promise<unknown>;
   };
-  readContract: (args: {address: Address; functionName: string; args: any[]}) => Promise<any>;
-  writeContract: (args: {address: Address; functionName: string; args: any[]; value: bigint}) => Promise<any>;
+  readContract: (args: {
+    account: Account;
+    address: Address;
+    functionName: string;
+    args: any[];
+  }) => Promise<any>;
+  writeContract: (args: {
+    account: Account;
+    address: Address;
+    functionName: string;
+    args: any[];
+    value: bigint;
+  }) => Promise<any>;
+  getTransaction: (args: {hash: TransactionHash}) => Promise<GenLayerTransaction>;
 };

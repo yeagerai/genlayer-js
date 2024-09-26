@@ -23,15 +23,20 @@ export const contractActions = (client: GenLayerClient<Transport, SimulatorChain
 };
 
 export const overrideContractActions = (client: GenLayerClient<Transport, SimulatorChain, Account>) => {
-  client.readContract = async (args: {address: Address; functionName: string; args: any[]}): Promise<any> => {
-    const {address, functionName, args: params} = args;
+  client.readContract = async (args: {
+    account: Account;
+    address: Address;
+    functionName: string;
+    args: any[];
+  }): Promise<any> => {
+    const {account, address, functionName, args: params} = args;
     const methodParamsAsString = JSON.stringify(params);
     const data = [functionName, methodParamsAsString];
     const encodedData = toRlp(data.map(param => toHex(param)));
 
     const requestParams = {
       to: address,
-      from: client.account?.address,
+      from: account?.address || client.account?.address,
       data: encodedData,
     };
     const result = await client.request({
@@ -42,22 +47,29 @@ export const overrideContractActions = (client: GenLayerClient<Transport, Simula
   };
 
   client.writeContract = async (args: {
+    account: Account;
     address: Address;
     functionName: string;
     args: any[];
     value: bigint;
   }): Promise<any> => {
-    const {address, functionName, args: params, value = 0n} = args;
+    const {account, address, functionName, args: params, value = 0n} = args;
     const methodParamsAsString = JSON.stringify(params);
     const data = [functionName, methodParamsAsString];
     const encodedData = toRlp(data.map(param => toHex(param)));
 
-    const account = client.account ?? createAccount();
-    if (!account.signTransaction) {
+    const senderAccount = account || client.account;
+    if (!senderAccount) {
+      throw new Error(
+        "No account set. Configure the client with an account or pass an account to this function.",
+      );
+    }
+
+    if (!senderAccount?.signTransaction) {
       throw new Error("Account does not support signTransaction");
     }
 
-    const signedTransaction = await account.signTransaction({
+    const signedTransaction = await senderAccount.signTransaction({
       data: encodedData,
       to: address,
       value,
