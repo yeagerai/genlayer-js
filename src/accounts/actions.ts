@@ -1,5 +1,5 @@
-import {GenLayerClient, TransactionHash, SimulatorChain} from "@/types";
-import {simulator} from "@/chains";
+import {GenLayerClient, TransactionHash, SimulatorChain} from "../types";
+import {simulator} from "../chains";
 import {Account, Transport} from "viem";
 
 export function accountActions<
