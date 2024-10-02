@@ -86,7 +86,7 @@ _* under development_
 
 ## 📖 Documentation
 
-For detailed information on how to use GenLayerJS SDK, please refer to our [documentation](https://docs.genlayer.io/).
+For detailed information on how to use GenLayerJS SDK, please refer to our [documentation](https://docs.genlayer.com/).
 
 
 
