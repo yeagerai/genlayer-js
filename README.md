@@ -39,15 +39,14 @@ const transaction = await client.getTransaction({ hash: transactionHash })
 ### Readding a contract
 ```typescript
 import { simulator } from 'genlayer-js/chains';
-import { createClient, createAccount } from "genlayer-js";
+import { createClient } from "genlayer-js";
 
-const account = createAccount();
 const client = createClient({
   network: simulator,
-  account: account, // hoist the account to use it on next calls
 });
 
 const result = await client.readContract({
+  // account: account, Account is optional when reading from contracts
   address: contractAddress,
   functionName: 'get_complete_storage',
   args: []
