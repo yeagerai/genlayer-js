@@ -1,7 +1,8 @@
 import {toRlp, toHex, Transport, Account, Address} from "viem";
 
-import {ContractSchema, SimulatorChain, GenLayerClient} from "@/types";
-import {createAccount} from "@/accounts/account";
+import {parse} from "@/abi/calldata/parser";
+import {encode} from "@/abi/calldata/encoder";
+import {ContractSchema, SimulatorChain, GenLayerClient, TransactionDataElement} from "@/types";
 
 export const contractActions = (client: GenLayerClient<Transport, SimulatorChain, Account>) => {
   return {
@@ -27,12 +28,10 @@ export const overrideContractActions = (client: GenLayerClient<Transport, Simula
     account: Account;
     address: Address;
     functionName: string;
-    args: any[];
+    args: string[];
   }): Promise<any> => {
     const {account, address, functionName, args: params} = args;
-    const methodParamsAsString = JSON.stringify(params);
-    const data = [functionName, methodParamsAsString];
-    const encodedData = toRlp(data.map(param => toHex(param)));
+    const encodedData = encode({method: functionName, args: params.map(parse)});
 
     const requestParams = {
       to: address,
@@ -50,13 +49,11 @@ export const overrideContractActions = (client: GenLayerClient<Transport, Simula
     account: Account;
     address: Address;
     functionName: string;
-    args: any[];
+    args: string[];
     value: bigint;
   }): Promise<any> => {
     const {account, address, functionName, args: params, value = 0n} = args;
-    const methodParamsAsString = JSON.stringify(params);
-    const data = [functionName, methodParamsAsString];
-    const encodedData = toRlp(data.map(param => toHex(param)));
+    const encodedData = encode({method: functionName, args: params.map(parse)});
 
     const senderAccount = account || client.account;
     if (!senderAccount) {
@@ -69,11 +66,14 @@ export const overrideContractActions = (client: GenLayerClient<Transport, Simula
       throw new Error("Account does not support signTransaction");
     }
 
+    const nonce = await client.getCurrentNonce({address: senderAccount.address});
+
     const signedTransaction = await senderAccount.signTransaction({
       data: encodedData,
       to: address,
       value,
       type: "legacy",
+      nonce,
     });
     const result = await client.request({
       method: "eth_sendRawTransaction",
