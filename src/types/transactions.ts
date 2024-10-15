@@ -27,3 +27,5 @@ export type GenLayerTransaction = {
   s?: number;
   v?: number;
 };
+
+export type TransactionDataElement = string | number | bigint | boolean | Uint8Array;
