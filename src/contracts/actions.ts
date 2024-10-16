@@ -1,7 +1,7 @@
 import {Transport, Account, Address} from "viem";
 
 import {encode} from "@/abi/calldata/encoder";
-import {ContractSchema, SimulatorChain, GenLayerClient, TransactionDataElement} from "@/types";
+import {ContractSchema, SimulatorChain, GenLayerClient, CalldataEncodable} from "@/types";
 
 export const contractActions = (client: GenLayerClient<Transport, SimulatorChain, Account>) => {
   return {
@@ -27,7 +27,7 @@ export const overrideContractActions = (client: GenLayerClient<Transport, Simula
     account: Account;
     address: Address;
     functionName: string;
-    args: string[];
+    args: CalldataEncodable[];
   }): Promise<any> => {
     const {account, address, functionName, args: params} = args;
     const encodedData = encode({method: functionName, args: params});
@@ -48,7 +48,7 @@ export const overrideContractActions = (client: GenLayerClient<Transport, Simula
     account: Account;
     address: Address;
     functionName: string;
-    args: string[];
+    args: CalldataEncodable[];
     value: bigint;
   }): Promise<any> => {
     const {account, address, functionName, args: params, value = 0n} = args;
