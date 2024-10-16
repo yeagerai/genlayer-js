@@ -11,7 +11,9 @@ describe("Client Creation", () => {
     expect(client).toBeDefined();
     expect(client.chain).toBe(simulator);
   });
+});
 
+describe("Client Overrides", () => {
   it("should default to client account if no account is provided", async () => {
     const account = createAccount(generatePrivateKey());
     const client = createClient({
@@ -72,6 +74,40 @@ describe("Client Creation", () => {
         },
         "latest",
       ],
+    });
+  });
+});
+
+describe("Request Method", () => {
+  it("should call sim_getTransactionsForAddress without a filter", async () => {
+    const account = createAccount(generatePrivateKey());
+    const client = createClient({
+      chain: simulator,
+      account,
+    });
+
+    // Mock the client.request method
+    vi.spyOn(client, "request");
+
+    await client.request({
+      method: "sim_getTransactionsForAddress",
+      params: [account.address],
+    });
+  });
+
+  it("should call sim_getTransactionsForAddress with a filter", async () => {
+    const account = createAccount(generatePrivateKey());
+    const client = createClient({
+      chain: simulator,
+      account,
+    });
+
+    // Mock the client.request method
+    vi.spyOn(client, "request").mockResolvedValue([]);
+
+    await client.request({
+      method: "sim_getTransactionsForAddress",
+      params: [account.address, "all"],
     });
   });
 });

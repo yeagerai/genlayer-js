@@ -10,7 +10,7 @@ export type GenLayerMethod =
   | {method: "eth_sedRawTransaction"; params: [signedTransaction: string]}
   | {method: "gen_getContractSchema"; params: [address: string]}
   | {method: "gen_getContractSchemaForCode"; params: [contractCode: string]}
-  | {method: "sim_getTransactionsForAddress"; params: [address: string, filter?: string]};
+  | {method: "sim_getTransactionsForAddress"; params: [address: string, filter?: "all" | "from" | "to"]};
 
 export type GenLayerClient<
   TTransport extends Transport,
