@@ -36,7 +36,7 @@ const client = createClient({
 const transaction = await client.getTransaction({ hash: transactionHash })
 ```
 
-### Readding a contract
+### Reading a contract
 ```typescript
 import { simulator } from 'genlayer-js/chains';
 import { createClient } from "genlayer-js";
