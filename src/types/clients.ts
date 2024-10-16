@@ -9,7 +9,8 @@ export type GenLayerMethod =
   | {method: "eth_call"; params: [requestParams: any, blockNumberOrHash: string]}
   | {method: "eth_sedRawTransaction"; params: [signedTransaction: string]}
   | {method: "gen_getContractSchema"; params: [address: string]}
-  | {method: "gen_getContractSchemaForCode"; params: [contractCode: string]};
+  | {method: "gen_getContractSchemaForCode"; params: [contractCode: string]}
+  | {method: "sim_getTransactionsForAddress"; params: [address: string, filter?: string]};
 
 export type GenLayerClient<
   TTransport extends Transport,
@@ -22,7 +23,7 @@ export type GenLayerClient<
     ): Promise<unknown>;
   };
   readContract: (args: {
-    account: Account;
+    account?: Account;
     address: Address;
     functionName: string;
     args: any[];
