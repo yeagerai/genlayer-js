@@ -1,6 +1,5 @@
-import {toRlp, toHex, Transport, Account, Address} from "viem";
+import {Transport, Account, Address} from "viem";
 
-import {parse} from "@/abi/calldata/parser";
 import {encode} from "@/abi/calldata/encoder";
 import {ContractSchema, SimulatorChain, GenLayerClient, TransactionDataElement} from "@/types";
 
@@ -31,7 +30,7 @@ export const overrideContractActions = (client: GenLayerClient<Transport, Simula
     args: string[];
   }): Promise<any> => {
     const {account, address, functionName, args: params} = args;
-    const encodedData = encode({method: functionName, args: params.map(parse)});
+    const encodedData = encode({method: functionName, args: params});
 
     const requestParams = {
       to: address,
@@ -53,7 +52,7 @@ export const overrideContractActions = (client: GenLayerClient<Transport, Simula
     value: bigint;
   }): Promise<any> => {
     const {account, address, functionName, args: params, value = 0n} = args;
-    const encodedData = encode({method: functionName, args: params.map(parse)});
+    const encodedData = encode({method: functionName, args: params});
 
     const senderAccount = account || client.account;
     if (!senderAccount) {
