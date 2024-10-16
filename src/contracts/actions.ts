@@ -24,7 +24,7 @@ export const contractActions = (client: GenLayerClient<Transport, SimulatorChain
 
 export const overrideContractActions = (client: GenLayerClient<Transport, SimulatorChain, Account>) => {
   client.readContract = async (args: {
-    account: Account;
+    account?: Account;
     address: Address;
     functionName: string;
     args: any[];

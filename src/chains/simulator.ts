@@ -20,7 +20,7 @@ export const simulator: SimulatorChain = defineChain({
   blockExplorers: {
     default: {
       name: "GenLayer Explorer",
-      url: "http://127.0.0.1:4000/api",
+      url: SIMULATOR_JSON_RPC_URL,
     },
   },
   testnet: true,
