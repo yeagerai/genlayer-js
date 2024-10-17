@@ -18,5 +18,11 @@ export function accountActions<
         params: [address, amount],
       }) as Promise<TransactionHash>;
     },
+    getCurrentNonce: async ({address}: {address: string}): Promise<number> => {
+      return client.request({
+        method: "eth_getTransactionCount",
+        params: [address || client.account?.address],
+      }) as Promise<number>;
+    },
   };
 }
