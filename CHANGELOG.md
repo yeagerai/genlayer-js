@@ -1,5 +1,12 @@
 
 
+## 0.2.0 (2024-10-17)
+
+
+### Features
+
+* implement genvm calldata ([#14](https://github.com/yeagerai/genlayer-js/issues/14)) ([d9a1abd](https://github.com/yeagerai/genlayer-js/commit/d9a1abdfb5eef13e5c77433db546953369087e04))
+
 ## 0.1.2 (2024-10-03)
 
 ## 0.1.1 (2024-10-03)
