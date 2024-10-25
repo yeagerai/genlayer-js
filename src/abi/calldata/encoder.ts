@@ -1,5 +1,5 @@
 import {toHex, toRlp} from "viem";
-import type {CalldataEncodable} from "../../types/calldata";
+import type {CalldataEncodable, TransactionDataElement} from "../../types/calldata";
 import {Address} from "../../types/calldata";
 
 const BITS_IN_TYPE = 3;
@@ -152,10 +152,17 @@ function encodeImpl(to: number[], data: CalldataEncodable) {
   }
 }
 
-export function encode(data: CalldataEncodable): `0x${string}` {
+export function encode(data: CalldataEncodable): Uint8Array {
   // FIXME: find a better growable type
   const arr: number[] = [];
   encodeImpl(arr, data);
-  const encodedData = new Uint8Array(arr);
-  return toRlp([encodedData].map(param => toHex(param)));
+  return new Uint8Array(arr);
+}
+
+export function serialize(data: TransactionDataElement[]): `0x${string}` {
+  return toRlp(data.map(param => toHex(param)));
+}
+
+export function encodeAndSerialize(data: CalldataEncodable): `0x${string}` {
+  return serialize([encode(data)]);
 }
