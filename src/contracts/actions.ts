@@ -1,6 +1,6 @@
 import {Transport, Account, Address} from "viem";
 
-import {encode} from "@/abi/calldata/encoder";
+import {encode, serialize, encodeAndSerialize} from "@/abi/calldata/encoder";
 import {ContractSchema, SimulatorChain, GenLayerClient, CalldataEncodable} from "@/types";
 
 export const contractActions = (client: GenLayerClient<Transport, SimulatorChain, Account>) => {
@@ -30,7 +30,7 @@ export const overrideContractActions = (client: GenLayerClient<Transport, Simula
     args: CalldataEncodable[];
   }): Promise<any> => {
     const {account, address, functionName, args: params} = args;
-    const encodedData = encode({method: functionName, args: params});
+    const encodedData = encodeAndSerialize({method: functionName, args: params});
 
     const requestParams = {
       to: address,
@@ -52,7 +52,7 @@ export const overrideContractActions = (client: GenLayerClient<Transport, Simula
     value: bigint;
   }): Promise<any> => {
     const {account, address, functionName, args: params, value = 0n} = args;
-    const encodedData = encode({method: functionName, args: params});
+    const encodedData = encodeAndSerialize({method: functionName, args: params});
 
     const senderAccount = account || client.account;
     if (!senderAccount) {
@@ -74,6 +74,37 @@ export const overrideContractActions = (client: GenLayerClient<Transport, Simula
       type: "legacy",
       nonce,
     });
+    const result = await client.request({
+      method: "eth_sendRawTransaction",
+      params: [signedTransaction],
+    });
+    return result;
+  };
+
+  client.deployContract = async (args: {account: Account; code: string; args: CalldataEncodable[]}) => {
+    const {account, code, args: constructorArgs} = args;
+    const data = [code, encode({args: constructorArgs})];
+    const serializedData = serialize(data);
+
+    const senderAccount = account || client.account;
+    if (!senderAccount) {
+      throw new Error(
+        "No account set. Configure the client with an account or pass an account to this function.",
+      );
+    }
+
+    if (!senderAccount?.signTransaction) {
+      throw new Error("Account does not support signTransaction");
+    }
+
+    const nonce = await client.getCurrentNonce({address: senderAccount.address});
+
+    const signedTransaction = await senderAccount.signTransaction({
+      data: serializedData,
+      type: "legacy",
+      nonce,
+    });
+
     const result = await client.request({
       method: "eth_sendRawTransaction",
       params: [signedTransaction],

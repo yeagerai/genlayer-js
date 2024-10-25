@@ -34,3 +34,5 @@ export type TransactionData = {
 
   args: CalldataEncodable[];
 };
+
+export type TransactionDataElement = string | number | bigint | boolean | Uint8Array;

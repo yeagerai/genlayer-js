@@ -2,6 +2,7 @@ import {Account, Transport, Client} from "viem";
 import {GenLayerTransaction, TransactionHash} from "./transactions";
 import {SimulatorChain} from "./chains";
 import {Address} from "./accounts";
+import {CalldataEncodable} from "./calldata";
 
 export type GenLayerMethod =
   | {method: "sim_fundAccount"; params: [address: string, amount: number]}
@@ -35,6 +36,7 @@ export type GenLayerClient<
     args: any[];
     value: bigint;
   }) => Promise<any>;
+  deployContract: (args: {account: Account; code: string; args: CalldataEncodable[]}) => Promise<any>;
   getTransaction: (args: {hash: TransactionHash}) => Promise<GenLayerTransaction>;
   getCurrentNonce: (args: {address: string}) => Promise<number>;
 };
