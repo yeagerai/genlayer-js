@@ -1,5 +1,12 @@
 
 
+## 0.3.0 (2024-10-25)
+
+
+### Features
+
+* add deploy contract action ([#17](https://github.com/yeagerai/genlayer-js/issues/17)) ([23d5bc2](https://github.com/yeagerai/genlayer-js/commit/23d5bc28fb58c73d64b1fd629185a0565d84cb91))
+
 ## 0.2.0 (2024-10-17)
 
 
