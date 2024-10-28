@@ -31,16 +31,12 @@ export const createClient = (config: ClientConfig = {chain: simulator}) => {
     ...(config.account ? {account: config.account} : {}),
   })
     .extend(publicActions)
-    .extend(client => accountActions(client as unknown as GenLayerClient<Transport, SimulatorChain, Account>))
-    .extend(client =>
-      transactionActions(client as unknown as GenLayerClient<Transport, SimulatorChain, Account>),
-    )
-    .extend(client =>
-      contractActions(client as unknown as GenLayerClient<Transport, SimulatorChain, Account>),
-    );
+    .extend(client => accountActions(client as unknown as GenLayerClient<Transport, SimulatorChain>))
+    .extend(client => transactionActions(client as unknown as GenLayerClient<Transport, SimulatorChain>))
+    .extend(client => contractActions(client as unknown as GenLayerClient<Transport, SimulatorChain>));
 
   const genLayerClient = overrideContractActions(
-    baseClient as unknown as GenLayerClient<Transport, SimulatorChain, Account>,
+    baseClient as unknown as GenLayerClient<Transport, SimulatorChain>,
   );
 
   return genLayerClient;

@@ -7,7 +7,7 @@ import {Account, Transport} from "viem";
 import {SimulatorChain} from "@/types";
 
 export const transactionActions = (
-  client: GenLayerClient<Transport, SimulatorChain, Account>,
+  client: GenLayerClient<Transport, SimulatorChain>,
 ): ITransactionActions => ({
   waitForTransactionReceipt: async ({
     hash,
@@ -20,7 +20,7 @@ export const transactionActions = (
     interval?: number;
     retries?: number;
   }): Promise<GenLayerTransaction> => {
-    const transaction = (await client.getTransaction({hash})) as GenLayerTransaction;
+    const transaction = await client.getTransaction({hash});
 
     if (!transaction) {
       throw new Error("Transaction not found");

@@ -3,7 +3,7 @@ import {Transport, Account, Address} from "viem";
 import {encode, serialize, encodeAndSerialize} from "@/abi/calldata/encoder";
 import {ContractSchema, SimulatorChain, GenLayerClient, CalldataEncodable} from "@/types";
 
-export const contractActions = (client: GenLayerClient<Transport, SimulatorChain, Account>) => {
+export const contractActions = (client: GenLayerClient<Transport, SimulatorChain>) => {
   return {
     getContractSchema: async (address: string): Promise<ContractSchema> => {
       const schema = (await client.request({
@@ -22,7 +22,7 @@ export const contractActions = (client: GenLayerClient<Transport, SimulatorChain
   };
 };
 
-export const overrideContractActions = (client: GenLayerClient<Transport, SimulatorChain, Account>) => {
+export const overrideContractActions = (client: GenLayerClient<Transport, SimulatorChain>) => {
   client.readContract = async (args: {
     account?: Account;
     address: Address;
