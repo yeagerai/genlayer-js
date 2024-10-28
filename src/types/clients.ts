@@ -1,5 +1,5 @@
-import {Account, Transport, Client} from "viem";
-import {GenLayerTransaction, TransactionHash} from "./transactions";
+import {Account, Transport, Client, PublicActions} from "viem";
+import {GenLayerTransaction, TransactionHash, TransactionStatus} from "./transactions";
 import {SimulatorChain} from "./chains";
 import {Address} from "./accounts";
 import {CalldataEncodable} from "./calldata";
@@ -17,26 +17,31 @@ export type GenLayerClient<
   TTransport extends Transport,
   TSimulatorChain extends SimulatorChain,
   TAccount extends Account,
-> = Client<TTransport, TSimulatorChain, TAccount> & {
-  request: Client<TTransport, TSimulatorChain, TAccount>["request"] & {
-    <TMethod extends GenLayerMethod>(
-      args: Extract<GenLayerMethod, {method: TMethod["method"]}>,
-    ): Promise<unknown>;
+> = Client<TTransport, TSimulatorChain, TAccount> &
+  PublicActions<TTransport, TSimulatorChain, TAccount> & {
+    request: Client<TTransport, TSimulatorChain, TAccount>["request"] & {
+      <TMethod extends GenLayerMethod>(
+        args: Extract<GenLayerMethod, {method: TMethod["method"]}>,
+      ): Promise<unknown>;
+    };
+    readContract: (args: {
+      account?: Account;
+      address: Address;
+      functionName: string;
+      args: any[];
+    }) => Promise<any>;
+    writeContract: (args: {
+      account?: Account;
+      address: Address;
+      functionName: string;
+      args: any[];
+      value: bigint;
+    }) => Promise<any>;
+    deployContract: (args: {account?: Account; code: string; args: CalldataEncodable[]}) => Promise<any>;
+    getTransaction: (args: {hash: TransactionHash}) => Promise<GenLayerTransaction>;
+    getCurrentNonce: (args: {address: string}) => Promise<number>;
+    waitForTransactionReceipt: (args: {
+      hash: TransactionHash;
+      status?: TransactionStatus;
+    }) => Promise<GenLayerTransaction>;
   };
-  readContract: (args: {
-    account: Account;
-    address: Address;
-    functionName: string;
-    args: any[];
-  }) => Promise<any>;
-  writeContract: (args: {
-    account: Account;
-    address: Address;
-    functionName: string;
-    args: any[];
-    value: bigint;
-  }) => Promise<any>;
-  deployContract: (args: {account: Account; code: string; args: CalldataEncodable[]}) => Promise<any>;
-  getTransaction: (args: {hash: TransactionHash}) => Promise<GenLayerTransaction>;
-  getCurrentNonce: (args: {address: string}) => Promise<number>;
-};

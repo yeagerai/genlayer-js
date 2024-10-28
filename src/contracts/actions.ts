@@ -24,7 +24,7 @@ export const contractActions = (client: GenLayerClient<Transport, SimulatorChain
 
 export const overrideContractActions = (client: GenLayerClient<Transport, SimulatorChain, Account>) => {
   client.readContract = async (args: {
-    account: Account;
+    account?: Account;
     address: Address;
     functionName: string;
     args: CalldataEncodable[];
@@ -45,7 +45,7 @@ export const overrideContractActions = (client: GenLayerClient<Transport, Simula
   };
 
   client.writeContract = async (args: {
-    account: Account;
+    account?: Account;
     address: Address;
     functionName: string;
     args: CalldataEncodable[];
@@ -81,7 +81,7 @@ export const overrideContractActions = (client: GenLayerClient<Transport, Simula
     return result;
   };
 
-  client.deployContract = async (args: {account: Account; code: string; args: CalldataEncodable[]}) => {
+  client.deployContract = async (args: {account?: Account; code: string; args: CalldataEncodable[]}) => {
     const {account, code, args: constructorArgs} = args;
     const data = [code, encode({args: constructorArgs})];
     const serializedData = serialize(data);
