@@ -1,4 +1,4 @@
-import {Account, createClient as createViemClient, http, publicActions, Transport} from "viem";
+import {Account, createClient as createViemClient, http, publicActions} from "viem";
 import {simulator} from "../chains/simulator";
 import {accountActions} from "../accounts/actions";
 import {contractActions, overrideContractActions} from "../contracts/actions";
@@ -31,13 +31,11 @@ export const createClient = (config: ClientConfig = {chain: simulator}) => {
     ...(config.account ? {account: config.account} : {}),
   })
     .extend(publicActions)
-    .extend(client => accountActions(client as unknown as GenLayerClient<Transport, SimulatorChain>))
-    .extend(client => transactionActions(client as unknown as GenLayerClient<Transport, SimulatorChain>))
-    .extend(client => contractActions(client as unknown as GenLayerClient<Transport, SimulatorChain>));
+    .extend(client => accountActions(client as unknown as GenLayerClient<SimulatorChain>))
+    .extend(client => transactionActions(client as unknown as GenLayerClient<SimulatorChain>))
+    .extend(client => contractActions(client as unknown as GenLayerClient<SimulatorChain>));
 
-  const genLayerClient = overrideContractActions(
-    baseClient as unknown as GenLayerClient<Transport, SimulatorChain>,
-  );
+  const genLayerClient = overrideContractActions(baseClient as unknown as GenLayerClient<SimulatorChain>);
 
   return genLayerClient;
 };

@@ -6,7 +6,7 @@ export function accountActions<
   transport extends Transport = Transport,
   chain extends SimulatorChain | undefined = SimulatorChain | undefined,
   account extends Account | undefined = Account | undefined,
->(client: GenLayerClient<Transport, SimulatorChain>) {
+>(client: GenLayerClient<SimulatorChain>) {
   return {
     fundAccount: async ({address, amount}: {address: string; amount: number}): Promise<TransactionHash> => {
       if (client.chain?.id !== simulator.id) {

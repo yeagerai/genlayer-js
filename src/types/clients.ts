@@ -13,12 +13,12 @@ export type GenLayerMethod =
   | {method: "gen_getContractSchemaForCode"; params: [contractCode: string]}
   | {method: "eth_getTransactionCount"; params: [address: string]};
 
-export type GenLayerClient<TTransport extends Transport, TSimulatorChain extends SimulatorChain> = Client<
-  TTransport,
-  TSimulatorChain
+export type GenLayerClient<TSimulatorChain extends SimulatorChain> = Omit<
+  Client<Transport, TSimulatorChain>,
+  "transport"
 > &
-  PublicActions<TTransport, TSimulatorChain> & {
-    request: Client<TTransport, TSimulatorChain>["request"] & {
+  Omit<PublicActions<Transport, TSimulatorChain>, "readContract"> & {
+    request: Client<Transport, TSimulatorChain>["request"] & {
       <TMethod extends GenLayerMethod>(
         args: Extract<GenLayerMethod, {method: TMethod["method"]}>,
       ): Promise<unknown>;
@@ -27,13 +27,13 @@ export type GenLayerClient<TTransport extends Transport, TSimulatorChain extends
       account?: Account;
       address: Address;
       functionName: string;
-      args: any[];
+      args: CalldataEncodable[];
     }) => Promise<any>;
     writeContract: (args: {
       account?: Account;
       address: Address;
       functionName: string;
-      args: any[];
+      args: CalldataEncodable[];
       value: bigint;
     }) => Promise<any>;
     deployContract: (args: {account?: Account; code: string; args: CalldataEncodable[]}) => Promise<any>;
