@@ -6,7 +6,7 @@ export function accountActions<
   transport extends Transport = Transport,
   chain extends SimulatorChain | undefined = SimulatorChain | undefined,
   account extends Account | undefined = Account | undefined,
->(client: GenLayerClient<Transport, SimulatorChain, Account>) {
+>(client: GenLayerClient<SimulatorChain>) {
   return {
     fundAccount: async ({address, amount}: {address: string; amount: number}): Promise<TransactionHash> => {
       if (client.chain?.id !== simulator.id) {
@@ -19,9 +19,15 @@ export function accountActions<
       }) as Promise<TransactionHash>;
     },
     getCurrentNonce: async ({address}: {address: string}): Promise<number> => {
+      const addressToUse = address || client.account?.address;
+
+      if (!addressToUse) {
+        throw new Error("No address provided and no account is connected");
+      }
+
       return client.request({
         method: "eth_getTransactionCount",
-        params: [address || client.account?.address],
+        params: [addressToUse],
       }) as Promise<number>;
     },
   };

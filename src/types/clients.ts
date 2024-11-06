@@ -1,7 +1,7 @@
-import {Account, Transport, Client, PublicActions} from "viem";
+import {Transport, Client, PublicActions} from "viem";
 import {GenLayerTransaction, TransactionHash, TransactionStatus} from "./transactions";
 import {SimulatorChain} from "./chains";
-import {Address} from "./accounts";
+import {Address, Account} from "./accounts";
 import {CalldataEncodable} from "./calldata";
 
 export type GenLayerMethod =
@@ -13,13 +13,18 @@ export type GenLayerMethod =
   | {method: "gen_getContractSchemaForCode"; params: [contractCode: string]}
   | {method: "eth_getTransactionCount"; params: [address: string]};
 
-export type GenLayerClient<
-  TTransport extends Transport,
-  TSimulatorChain extends SimulatorChain,
-  TAccount extends Account,
-> = Client<TTransport, TSimulatorChain, TAccount> &
-  PublicActions<TTransport, TSimulatorChain, TAccount> & {
-    request: Client<TTransport, TSimulatorChain, TAccount>["request"] & {
+/*
+  Take all the properties from PublicActions<Transport, TSimulatorChain>
+  Remove the transport, readContract, and getTransaction properties
+  The resulting type will have everything from PublicActions EXCEPT those
+  two properties which are added later
+*/
+export type GenLayerClient<TSimulatorChain extends SimulatorChain> = Omit<
+  Client<Transport, TSimulatorChain>,
+  "transport" | "getTransaction" | "readContract"
+> &
+  Omit<PublicActions<Transport, TSimulatorChain>, "readContract" | "getTransaction"> & {
+    request: Client<Transport, TSimulatorChain>["request"] & {
       <TMethod extends GenLayerMethod>(
         args: Extract<GenLayerMethod, {method: TMethod["method"]}>,
       ): Promise<unknown>;
@@ -28,13 +33,13 @@ export type GenLayerClient<
       account?: Account;
       address: Address;
       functionName: string;
-      args: any[];
+      args: CalldataEncodable[];
     }) => Promise<any>;
     writeContract: (args: {
       account?: Account;
       address: Address;
       functionName: string;
-      args: any[];
+      args: CalldataEncodable[];
       value: bigint;
     }) => Promise<any>;
     deployContract: (args: {account?: Account; code: string; args: CalldataEncodable[]}) => Promise<any>;
