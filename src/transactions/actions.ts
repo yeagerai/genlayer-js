@@ -2,13 +2,9 @@ import {GenLayerClient} from "../types/clients";
 import {TransactionHash, TransactionStatus, GenLayerTransaction} from "../types/transactions";
 import {transactionsConfig} from "../config/transactions";
 import {sleep} from "../utils/async";
-import {ITransactionActions} from "./ITransactionActions";
-import {Account, Transport} from "viem";
 import {SimulatorChain} from "@/types";
 
-export const transactionActions = (
-  client: GenLayerClient<Transport, SimulatorChain>,
-): ITransactionActions => ({
+export const transactionActions = (client: GenLayerClient<SimulatorChain>) => ({
   waitForTransactionReceipt: async ({
     hash,
     status = TransactionStatus.FINALIZED,

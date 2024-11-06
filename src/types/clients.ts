@@ -1,7 +1,7 @@
-import {Account, Transport, Client, PublicActions} from "viem";
+import {Transport, Client, PublicActions} from "viem";
 import {GenLayerTransaction, TransactionHash, TransactionStatus} from "./transactions";
 import {SimulatorChain} from "./chains";
-import {Address} from "./accounts";
+import {Address, Account} from "./accounts";
 import {CalldataEncodable} from "./calldata";
 
 export type GenLayerMethod =
@@ -15,9 +15,9 @@ export type GenLayerMethod =
 
 export type GenLayerClient<TSimulatorChain extends SimulatorChain> = Omit<
   Client<Transport, TSimulatorChain>,
-  "transport"
+  "transport" | "getTransaction" | "readContract"
 > &
-  Omit<PublicActions<Transport, TSimulatorChain>, "readContract"> & {
+  Omit<PublicActions<Transport, TSimulatorChain>, "readContract" | "getTransaction"> & {
     request: Client<Transport, TSimulatorChain>["request"] & {
       <TMethod extends GenLayerMethod>(
         args: Extract<GenLayerMethod, {method: TMethod["method"]}>,

@@ -1,5 +1,4 @@
-import {Account} from "viem";
-
+import {Account} from "../types/accounts";
 import {encode, serialize, encodeAndSerialize} from "@/abi/calldata/encoder";
 import {ContractSchema, SimulatorChain, GenLayerClient, CalldataEncodable, Address} from "@/types";
 
