@@ -13,6 +13,12 @@ export type GenLayerMethod =
   | {method: "gen_getContractSchemaForCode"; params: [contractCode: string]}
   | {method: "eth_getTransactionCount"; params: [address: string]};
 
+/*
+  Take all the properties from PublicActions<Transport, TSimulatorChain>
+  Remove the transport, readContract, and getTransaction properties
+  The resulting type will have everything from PublicActions EXCEPT those
+  two properties which are added later
+*/
 export type GenLayerClient<TSimulatorChain extends SimulatorChain> = Omit<
   Client<Transport, TSimulatorChain>,
   "transport" | "getTransaction" | "readContract"
