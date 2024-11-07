@@ -15,9 +15,19 @@ test("type checks", () => {
     params: ["0x1234567890123456789012345678901234567890", "whatever"],
   });
 
-  // This should pass type checking - "all" is a valid filter
+  // This should pass type checking - "all", "to" and "from" are valid filters
   client.request({
     method: "sim_getTransactionsForAddress",
     params: ["0x1234567890123456789012345678901234567890", "all"],
+  });
+
+  client.request({
+    method: "sim_getTransactionsForAddress",
+    params: ["0x1234567890123456789012345678901234567890", "to"],
+  });
+
+  client.request({
+    method: "sim_getTransactionsForAddress",
+    params: ["0x1234567890123456789012345678901234567890", "from"],
   });
 });
