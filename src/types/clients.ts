@@ -1,7 +1,8 @@
-import {Account, Transport, Client} from "viem";
-import {GenLayerTransaction, TransactionHash} from "./transactions";
+import {Transport, Client, PublicActions} from "viem";
+import {GenLayerTransaction, TransactionHash, TransactionStatus} from "./transactions";
 import {SimulatorChain} from "./chains";
-import {Address} from "./accounts";
+import {Address, Account} from "./accounts";
+import {CalldataEncodable} from "./calldata";
 
 export type GenLayerMethod =
   | {method: "sim_fundAccount"; params: [address: string, amount: number]}
@@ -10,30 +11,43 @@ export type GenLayerMethod =
   | {method: "eth_sedRawTransaction"; params: [signedTransaction: string]}
   | {method: "gen_getContractSchema"; params: [address: string]}
   | {method: "gen_getContractSchemaForCode"; params: [contractCode: string]}
-  | {method: "sim_getTransactionsForAddress"; params: [address: string, filter?: "all" | "from" | "to"]};
+  | {method: "sim_getTransactionsForAddress"; params: [address: string, filter?: "all" | "from" | "to"]}
+  | {method: "eth_getTransactionCount"; params: [address: string]};
 
-export type GenLayerClient<
-  TTransport extends Transport,
-  TSimulatorChain extends SimulatorChain,
-  TAccount extends Account,
-> = Client<TTransport, TSimulatorChain, TAccount> & {
-  request: Client<TTransport, TSimulatorChain, TAccount>["request"] & {
-    <TMethod extends GenLayerMethod>(
-      args: Extract<GenLayerMethod, {method: TMethod["method"]}>,
-    ): Promise<unknown>;
+/*
+  Take all the properties from PublicActions<Transport, TSimulatorChain>
+  Remove the transport, readContract, and getTransaction properties
+  The resulting type will have everything from PublicActions EXCEPT those
+  two properties which are added later
+*/
+export type GenLayerClient<TSimulatorChain extends SimulatorChain> = Omit<
+  Client<Transport, TSimulatorChain>,
+  "transport" | "getTransaction" | "readContract"
+> &
+  Omit<PublicActions<Transport, TSimulatorChain>, "readContract" | "getTransaction"> & {
+    request: Client<Transport, TSimulatorChain>["request"] & {
+      <TMethod extends GenLayerMethod>(
+        args: Extract<GenLayerMethod, {method: TMethod["method"]}>,
+      ): Promise<unknown>;
+    };
+    readContract: (args: {
+      account?: Account;
+      address: Address;
+      functionName: string;
+      args: CalldataEncodable[];
+    }) => Promise<any>;
+    writeContract: (args: {
+      account?: Account;
+      address: Address;
+      functionName: string;
+      args: CalldataEncodable[];
+      value: bigint;
+    }) => Promise<any>;
+    deployContract: (args: {account?: Account; code: string; args: CalldataEncodable[]}) => Promise<any>;
+    getTransaction: (args: {hash: TransactionHash}) => Promise<GenLayerTransaction>;
+    getCurrentNonce: (args: {address: string}) => Promise<number>;
+    waitForTransactionReceipt: (args: {
+      hash: TransactionHash;
+      status?: TransactionStatus;
+    }) => Promise<GenLayerTransaction>;
   };
-  readContract: (args: {
-    account?: Account;
-    address: Address;
-    functionName: string;
-    args: any[];
-  }) => Promise<any>;
-  writeContract: (args: {
-    account: Account;
-    address: Address;
-    functionName: string;
-    args: any[];
-    value: bigint;
-  }) => Promise<any>;
-  getTransaction: (args: {hash: TransactionHash}) => Promise<GenLayerTransaction>;
-};

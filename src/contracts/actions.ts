@@ -1,9 +1,7 @@
-import {toRlp, toHex, Transport, Account, Address} from "viem";
+import {encode, serialize, encodeAndSerialize} from "@/abi/calldata/encoder";
+import {Account, ContractSchema, SimulatorChain, GenLayerClient, CalldataEncodable, Address} from "@/types";
 
-import {ContractSchema, SimulatorChain, GenLayerClient} from "@/types";
-import {createAccount} from "@/accounts/account";
-
-export const contractActions = (client: GenLayerClient<Transport, SimulatorChain, Account>) => {
+export const contractActions = (client: GenLayerClient<SimulatorChain>) => {
   return {
     getContractSchema: async (address: string): Promise<ContractSchema> => {
       const schema = (await client.request({
@@ -22,17 +20,15 @@ export const contractActions = (client: GenLayerClient<Transport, SimulatorChain
   };
 };
 
-export const overrideContractActions = (client: GenLayerClient<Transport, SimulatorChain, Account>) => {
+export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) => {
   client.readContract = async (args: {
     account?: Account;
     address: Address;
     functionName: string;
-    args: any[];
+    args: CalldataEncodable[];
   }): Promise<any> => {
     const {account, address, functionName, args: params} = args;
-    const methodParamsAsString = JSON.stringify(params);
-    const data = [functionName, methodParamsAsString];
-    const encodedData = toRlp(data.map(param => toHex(param)));
+    const encodedData = encodeAndSerialize({method: functionName, args: params});
 
     const requestParams = {
       to: address,
@@ -47,16 +43,14 @@ export const overrideContractActions = (client: GenLayerClient<Transport, Simula
   };
 
   client.writeContract = async (args: {
-    account: Account;
+    account?: Account;
     address: Address;
     functionName: string;
-    args: any[];
+    args: CalldataEncodable[];
     value: bigint;
   }): Promise<any> => {
     const {account, address, functionName, args: params, value = 0n} = args;
-    const methodParamsAsString = JSON.stringify(params);
-    const data = [functionName, methodParamsAsString];
-    const encodedData = toRlp(data.map(param => toHex(param)));
+    const encodedData = encodeAndSerialize({method: functionName, args: params});
 
     const senderAccount = account || client.account;
     if (!senderAccount) {
@@ -69,12 +63,46 @@ export const overrideContractActions = (client: GenLayerClient<Transport, Simula
       throw new Error("Account does not support signTransaction");
     }
 
+    const nonce = await client.getCurrentNonce({address: senderAccount.address});
+
     const signedTransaction = await senderAccount.signTransaction({
       data: encodedData,
       to: address,
       value,
       type: "legacy",
+      nonce,
     });
+    const result = await client.request({
+      method: "eth_sendRawTransaction",
+      params: [signedTransaction],
+    });
+    return result;
+  };
+
+  client.deployContract = async (args: {account?: Account; code: string; args: CalldataEncodable[]}) => {
+    const {account, code, args: constructorArgs} = args;
+    const data = [code, encode({args: constructorArgs})];
+    const serializedData = serialize(data);
+
+    const senderAccount = account || client.account;
+    if (!senderAccount) {
+      throw new Error(
+        "No account set. Configure the client with an account or pass an account to this function.",
+      );
+    }
+
+    if (!senderAccount?.signTransaction) {
+      throw new Error("Account does not support signTransaction");
+    }
+
+    const nonce = await client.getCurrentNonce({address: senderAccount.address});
+
+    const signedTransaction = await senderAccount.signTransaction({
+      data: serializedData,
+      type: "legacy",
+      nonce,
+    });
+
     const result = await client.request({
       method: "eth_sendRawTransaction",
       params: [signedTransaction],
