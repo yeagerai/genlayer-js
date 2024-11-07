@@ -27,6 +27,7 @@ jobs:
 
       - name: Run tests
         run: npm test
+        timeout-minutes: 5
 
       - name: Run linting
         run: npm run lint
