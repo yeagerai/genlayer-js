@@ -93,6 +93,11 @@ describe("Request Method", () => {
       method: "sim_getTransactionsForAddress",
       params: [account.address],
     });
+
+    expect(client.request).toHaveBeenCalledWith({
+      method: "sim_getTransactionsForAddress",
+      params: [account.address],
+    });
   });
 
   it("should call sim_getTransactionsForAddress with a filter", async () => {
@@ -109,5 +114,11 @@ describe("Request Method", () => {
       method: "sim_getTransactionsForAddress",
       params: [account.address, "all"],
     });
+
+    expect(client.request).toHaveBeenCalledWith({
+      method: "sim_getTransactionsForAddress",
+      params: [account.address, "all"],
+    });
+    expect(client.request).toHaveBeenCalledTimes(1);
   });
 });
