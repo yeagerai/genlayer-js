@@ -77,7 +77,7 @@ function encodeMap(to: number[], arr: Iterable<[string, CalldataEncodable]>) {
   }
 
   encodeNumWithType(to, BigInt(newEntries.length), TYPE_MAP);
-  for (const [_k, k, v] of newEntries) {
+  for (const [, k, v] of newEntries) {
     writeNum(to, BigInt(k.length));
     for (const c of k) {
       to.push(c);

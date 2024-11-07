@@ -1,11 +1,6 @@
-import {Account, Chain, Transport} from "viem";
 import {TransactionHash, TransactionStatus, GenLayerTransaction} from "@/types";
 
-export type ITransactionActions<
-  transport extends Transport = Transport,
-  chain extends Chain | undefined = Chain | undefined,
-  account extends Account | undefined = Account | undefined,
-> = {
+export type ITransactionActions = {
   waitForTransactionReceipt: ({
     hash,
     status,

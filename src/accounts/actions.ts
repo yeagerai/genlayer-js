@@ -1,12 +1,7 @@
 import {GenLayerClient, TransactionHash, SimulatorChain} from "../types";
 import {simulator} from "../chains";
-import {Account, Transport} from "viem";
 
-export function accountActions<
-  transport extends Transport = Transport,
-  chain extends SimulatorChain | undefined = SimulatorChain | undefined,
-  account extends Account | undefined = Account | undefined,
->(client: GenLayerClient<SimulatorChain>) {
+export function accountActions(client: GenLayerClient<SimulatorChain>) {
   return {
     fundAccount: async ({address, amount}: {address: string; amount: number}): Promise<TransactionHash> => {
       if (client.chain?.id !== simulator.id) {

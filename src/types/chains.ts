@@ -1,3 +1,3 @@
 import {Chain} from "viem";
 
-export interface SimulatorChain extends Chain {}
+export type SimulatorChain = Chain;
