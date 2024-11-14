@@ -1,5 +1,12 @@
 
 
+## 0.3.4 (2024-11-14)
+
+
+### Bug Fixes
+
+* allow accounts to be nullable in `readContract` and add `sim_getTransactionsForAddress` method ([#16](https://github.com/yeagerai/genlayer-js/issues/16)) ([ea4bb6c](https://github.com/yeagerai/genlayer-js/commit/ea4bb6cb53809f6c17a3794ed35aede979bd89e5))
+
 ## 0.3.3 (2024-11-11)
 
 ## 0.3.2 (2024-11-06)
