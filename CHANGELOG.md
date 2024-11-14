@@ -1,5 +1,12 @@
 
 
+## 0.4.0 (2024-11-14)
+
+
+### Features
+
+* add contract schema methods ([#26](https://github.com/yeagerai/genlayer-js/issues/26)) ([7dc726f](https://github.com/yeagerai/genlayer-js/commit/7dc726fa4fc8769feaec07a50149956d7c2a2035))
+
 ## 0.3.4 (2024-11-14)
 
 
