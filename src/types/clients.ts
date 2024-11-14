@@ -11,6 +11,7 @@ export type GenLayerMethod =
   | {method: "eth_sedRawTransaction"; params: [signedTransaction: string]}
   | {method: "gen_getContractSchema"; params: [address: string]}
   | {method: "gen_getContractSchemaForCode"; params: [contractCode: string]}
+  | {method: "sim_getTransactionsForAddress"; params: [address: string, filter?: "all" | "from" | "to"]}
   | {method: "eth_getTransactionCount"; params: [address: string]};
 
 /*

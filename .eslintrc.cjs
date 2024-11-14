@@ -49,6 +49,7 @@ module.exports = {
     "jest.config.js",
     "Config.js",
     "commitLint.config.ts",
+    "vitest.config.ts",
   ],
   settings: {
     "import/resolver": {
