@@ -3,6 +3,7 @@ import {GenLayerTransaction, TransactionHash, TransactionStatus} from "./transac
 import {SimulatorChain} from "./chains";
 import {Address, Account} from "./accounts";
 import {CalldataEncodable} from "./calldata";
+import {ContractSchema} from "./contracts";
 
 export type GenLayerMethod =
   | {method: "sim_fundAccount"; params: [address: string, amount: number]}
@@ -50,4 +51,6 @@ export type GenLayerClient<TSimulatorChain extends SimulatorChain> = Omit<
       hash: TransactionHash;
       status?: TransactionStatus;
     }) => Promise<GenLayerTransaction>;
+    getContractSchema: (address: string) => Promise<ContractSchema>;
+    getContractSchemaForCode: (contractCode: string) => Promise<ContractSchema>;
   };
