@@ -43,8 +43,14 @@ export type GenLayerClient<TSimulatorChain extends SimulatorChain> = Omit<
       functionName: string;
       args: CalldataEncodable[];
       value: bigint;
+      leader_only?: boolean;
     }) => Promise<any>;
-    deployContract: (args: {account?: Account; code: string; args: CalldataEncodable[]}) => Promise<any>;
+    deployContract: (args: {
+      account?: Account;
+      code: string;
+      args: CalldataEncodable[];
+      leader_only?: boolean;
+    }) => Promise<any>;
     getTransaction: (args: {hash: TransactionHash}) => Promise<GenLayerTransaction>;
     getCurrentNonce: (args: {address: string}) => Promise<number>;
     waitForTransactionReceipt: (args: {

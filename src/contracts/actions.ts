@@ -48,9 +48,11 @@ export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) 
     functionName: string;
     args: CalldataEncodable[];
     value: bigint;
+    leader_only?: boolean;
   }): Promise<any> => {
-    const {account, address, functionName, args: params, value = 0n} = args;
-    const encodedData = encodeAndSerialize({method: functionName, args: params});
+    const {account, address, functionName, args: params, value = 0n, leader_only = false} = args;
+    const data = [encode({method: functionName, args: params}), leader_only];
+    const serializedData = serialize(data);
 
     const senderAccount = account || client.account;
     if (!senderAccount) {
@@ -66,7 +68,7 @@ export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) 
     const nonce = await client.getCurrentNonce({address: senderAccount.address});
 
     const signedTransaction = await senderAccount.signTransaction({
-      data: encodedData,
+      data: serializedData,
       to: address,
       value,
       type: "legacy",
@@ -79,9 +81,14 @@ export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) 
     return result;
   };
 
-  client.deployContract = async (args: {account?: Account; code: string; args: CalldataEncodable[]}) => {
-    const {account, code, args: constructorArgs} = args;
-    const data = [code, encode({args: constructorArgs})];
+  client.deployContract = async (args: {
+    account?: Account;
+    code: string;
+    args: CalldataEncodable[];
+    leader_only?: boolean;
+  }) => {
+    const {account, code, args: constructorArgs, leader_only = false} = args;
+    const data = [code, encode({args: constructorArgs}), leader_only];
     const serializedData = serialize(data);
 
     const senderAccount = account || client.account;
