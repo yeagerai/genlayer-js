@@ -32,7 +32,7 @@ export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) 
 
     const requestParams = {
       to: address,
-      from: account?.address || client.account?.address,
+      from: account?.address ?? client.account?.address,
       data: encodedData,
     };
     const result = await client.request({
@@ -49,7 +49,7 @@ export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) 
     args: CalldataEncodable[];
     value: bigint;
     leader_only?: boolean;
-  }): Promise<any> => {
+  }): Promise<`0x${string}`> => {
     const {account, address, functionName, args: params, value = 0n, leader_only = false} = args;
     const data = [encode({method: functionName, args: params}), leader_only];
     const serializedData = serialize(data);
