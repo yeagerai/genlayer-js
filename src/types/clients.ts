@@ -25,7 +25,10 @@ export type GenLayerClient<TSimulatorChain extends SimulatorChain> = Omit<
   Client<Transport, TSimulatorChain>,
   "transport" | "getTransaction" | "readContract"
 > &
-  Omit<PublicActions<Transport, TSimulatorChain>, "readContract" | "getTransaction"> & {
+  Omit<
+    PublicActions<Transport, TSimulatorChain>,
+    "readContract" | "getTransaction" | "waitForTransactionReceipt"
+  > & {
     request: Client<Transport, TSimulatorChain>["request"] & {
       <TMethod extends GenLayerMethod>(
         args: Extract<GenLayerMethod, {method: TMethod["method"]}>,
