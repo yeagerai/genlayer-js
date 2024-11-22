@@ -17,7 +17,24 @@ export type GenLayerTransaction = {
   from_address?: string;
   to_address?: string;
   data?: Record<string, unknown>;
-  consensus_data?: Record<string, unknown>;
+  consensus_data?: {
+    final: boolean;
+    leader_receipt?: {
+      calldata: string;
+      class_name: string;
+      contract_state: string;
+      eq_outputs: Record<string, unknown>;
+      error: string | null;
+      execution_result: string;
+      gas_used: number;
+      mode: string;
+      node_config: Record<string, unknown>;
+      pending_transactions: unknown[];
+      vote: string;
+    };
+    validators?: Record<string, unknown>[];
+    votes?: Record<string, string>;
+  };
   nonce?: number;
   value?: number;
   type?: number;
