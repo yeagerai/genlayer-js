@@ -25,7 +25,10 @@ export type GenLayerClient<TSimulatorChain extends SimulatorChain> = Omit<
   Client<Transport, TSimulatorChain>,
   "transport" | "getTransaction" | "readContract"
 > &
-  Omit<PublicActions<Transport, TSimulatorChain>, "readContract" | "getTransaction"> & {
+  Omit<
+    PublicActions<Transport, TSimulatorChain>,
+    "readContract" | "getTransaction" | "waitForTransactionReceipt"
+  > & {
     request: Client<Transport, TSimulatorChain>["request"] & {
       <TMethod extends GenLayerMethod>(
         args: Extract<GenLayerMethod, {method: TMethod["method"]}>,
@@ -36,7 +39,7 @@ export type GenLayerClient<TSimulatorChain extends SimulatorChain> = Omit<
       address: Address;
       functionName: string;
       args: CalldataEncodable[];
-    }) => Promise<any>;
+    }) => Promise<`0x${string}`>;
     writeContract: (args: {
       account?: Account;
       address: Address;
@@ -50,12 +53,14 @@ export type GenLayerClient<TSimulatorChain extends SimulatorChain> = Omit<
       code: string;
       args: CalldataEncodable[];
       leader_only?: boolean;
-    }) => Promise<any>;
+    }) => Promise<`0x${string}`>;
     getTransaction: (args: {hash: TransactionHash}) => Promise<GenLayerTransaction>;
     getCurrentNonce: (args: {address: string}) => Promise<number>;
     waitForTransactionReceipt: (args: {
       hash: TransactionHash;
       status?: TransactionStatus;
+      interval?: number;
+      retries?: number;
     }) => Promise<GenLayerTransaction>;
     getContractSchema: (address: string) => Promise<ContractSchema>;
     getContractSchemaForCode: (contractCode: string) => Promise<ContractSchema>;

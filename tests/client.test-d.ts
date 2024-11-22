@@ -1,6 +1,7 @@
 import {createClient} from "../src/client/client";
 import {simulator} from "../src/chains/simulator";
 import {createAccount, generatePrivateKey} from "../src/accounts/account";
+import {TransactionHash, TransactionStatus} from "../src/types/transactions";
 
 test("type checks", () => {
   const client = createClient({
@@ -36,4 +37,31 @@ test("type checks", () => {
   void client.getContractSchema(exampleAddress);
 
   void client.getContractSchemaForCode("class SomeContract...");
+
+  void client.waitForTransactionReceipt({
+    hash: "0x1234567890123456789012345678901234567890123456789012345678901234" as TransactionHash,
+  });
+
+  void client.waitForTransactionReceipt({
+    hash: "0x1234567890123456789012345678901234567890123456789012345678901234" as TransactionHash,
+    status: TransactionStatus.FINALIZED,
+  });
+
+  void client.waitForTransactionReceipt({
+    hash: "0x1234567890123456789012345678901234567890123456789012345678901234" as TransactionHash,
+    status: TransactionStatus.FINALIZED,
+    interval: 1000,
+  });
+
+  void client.waitForTransactionReceipt({
+    hash: "0x1234567890123456789012345678901234567890123456789012345678901234" as TransactionHash,
+    status: TransactionStatus.FINALIZED,
+    interval: 1000,
+    retries: 10,
+  });
+
+  // @ts-expect-error missing hash
+  void client.waitForTransactionReceipt({
+    status: TransactionStatus.FINALIZED,
+  });
 });

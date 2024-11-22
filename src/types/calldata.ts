@@ -18,7 +18,6 @@ export type CalldataEncodable =
   | bigint
   | string
   | Uint8Array /// bytes
-  | Address
   | Array<CalldataEncodable>
   | Map<string, CalldataEncodable>
   | {[key: string]: CalldataEncodable}; /// also a "map"
