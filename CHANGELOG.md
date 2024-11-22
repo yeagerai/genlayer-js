@@ -1,5 +1,12 @@
 
 
+## 0.4.2 (2024-11-22)
+
+
+### Bug Fixes
+
+* types ([#29](https://github.com/yeagerai/genlayer-js/issues/29)) ([d8f16fd](https://github.com/yeagerai/genlayer-js/commit/d8f16fdb739e32e6eea52a38e23d96a4433728ad))
+
 ## 0.4.1 (2024-11-20)
 
 ## 0.4.0 (2024-11-14)
