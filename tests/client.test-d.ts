@@ -1,7 +1,7 @@
 import {createClient} from "../src/client/client";
 import {simulator} from "../src/chains/simulator";
 import {createAccount, generatePrivateKey} from "../src/accounts/account";
-import {TransactionHash, TransactionStatus} from "./types/transactions";
+import {TransactionHash, TransactionStatus} from "../src/types/transactions";
 
 test("type checks", () => {
   const client = createClient({
