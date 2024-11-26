@@ -39,7 +39,7 @@ export type GenLayerClient<TSimulatorChain extends SimulatorChain> = Omit<
       address: Address;
       functionName: string;
       args: CalldataEncodable[];
-    }) => Promise<`0x${string}`>;
+    }) => Promise<unknown>;
     writeContract: (args: {
       account?: Account;
       address: Address;

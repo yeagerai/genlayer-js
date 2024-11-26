@@ -26,7 +26,7 @@ export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) 
     address: Address;
     functionName: string;
     args: CalldataEncodable[];
-  }): Promise<any> => {
+  }): Promise<unknown> => {
     const {account, address, functionName, args: params} = args;
     const encodedData = encodeAndSerialize({method: functionName, args: params});
 
