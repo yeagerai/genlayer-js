@@ -1,5 +1,12 @@
 
 
+## 0.4.3 (2024-11-26)
+
+
+### Bug Fixes
+
+* readContract return type ([#32](https://github.com/yeagerai/genlayer-js/issues/32)) ([8222453](https://github.com/yeagerai/genlayer-js/commit/82224530cf5c28b17b43943fad92cd5782ecf1be))
+
 ## 0.4.2 (2024-11-22)
 
 
