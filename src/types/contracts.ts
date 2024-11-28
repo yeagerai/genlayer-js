@@ -1,15 +1,31 @@
+export type ContractParamsArraySchemaElement = ContractParamsSchema | {$rep: ContractParamsSchema};
+
+export type ContractParamsSchema =
+  | "null"
+  | "bool"
+  | "int"
+  | "address"
+  | "string"
+  | "bytes"
+  | "any"
+  | "array"
+  | "dict"
+  | {$or: ContractParamsSchema[]}
+  | {$dict: ContractParamsSchema}
+  | {[key: string]: ContractParamsSchema}
+  | ContractParamsArraySchemaElement[];
+
+export interface ContractMethodBase {
+  params: [string, ContractParamsSchema][];
+  kwparams: {[key: string]: ContractParamsSchema};
+}
+
+export interface ContractMethod extends ContractMethodBase {
+  ret: ContractParamsSchema;
+  readonly: boolean;
+}
+
 export type ContractSchema = {
-  abi: Array<{
-    inputs?: Array<{
-      name: string;
-      type: string;
-    }>;
-    name?: string;
-    outputs?: Array<{
-      name: string;
-      type: string;
-    }>;
-    type: "constructor" | "function";
-  }>;
-  class: string;
+  ctor: ContractMethodBase;
+  methods: ContractMethod[];
 };
