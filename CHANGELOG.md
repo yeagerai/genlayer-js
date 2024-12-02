@@ -1,5 +1,12 @@
 
 
+## 0.4.5 (2024-12-02)
+
+
+### Bug Fixes
+
+* set leaderOnly parameter camelCase ([#35](https://github.com/yeagerai/genlayer-js/issues/35)) ([a6a4cae](https://github.com/yeagerai/genlayer-js/commit/a6a4caed8ab2784c2de202e34429c68eeeb0482d))
+
 ## 0.4.4 (2024-11-28)
 
 ## 0.4.3 (2024-11-26)
