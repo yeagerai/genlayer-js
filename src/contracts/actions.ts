@@ -48,10 +48,10 @@ export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) 
     functionName: string;
     args: CalldataEncodable[];
     value: bigint;
-    leader_only?: boolean;
+    leaderOnly?: boolean;
   }): Promise<`0x${string}`> => {
-    const {account, address, functionName, args: params, value = 0n, leader_only = false} = args;
-    const data = [encode({method: functionName, args: params}), leader_only];
+    const {account, address, functionName, args: params, value = 0n, leaderOnly = false} = args;
+    const data = [encode({method: functionName, args: params}), leaderOnly];
     const serializedData = serialize(data);
 
     const senderAccount = account || client.account;
@@ -85,10 +85,10 @@ export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) 
     account?: Account;
     code: string;
     args: CalldataEncodable[];
-    leader_only?: boolean;
+    leaderOnly?: boolean;
   }) => {
-    const {account, code, args: constructorArgs, leader_only = false} = args;
-    const data = [code, encode({args: constructorArgs}), leader_only];
+    const {account, code, args: constructorArgs, leaderOnly = false} = args;
+    const data = [code, encode({args: constructorArgs}), leaderOnly];
     const serializedData = serialize(data);
 
     const senderAccount = account || client.account;
