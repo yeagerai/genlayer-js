@@ -7,7 +7,7 @@ import {SimulatorChain} from "@/types";
 export const transactionActions = (client: GenLayerClient<SimulatorChain>) => ({
   waitForTransactionReceipt: async ({
     hash,
-    status = TransactionStatus.FINALIZED,
+    status = TransactionStatus.ACCEPTED,
     interval = transactionsConfig.waitInterval,
     retries = transactionsConfig.retries,
   }: {
