@@ -2,11 +2,11 @@ import {defineChain} from "viem";
 import {SimulatorChain} from "@/types";
 
 // chains/simulator.ts
-const SIMULATOR_JSON_RPC_URL = "http://127.0.0.1:4000/api";
+const SIMULATOR_JSON_RPC_URL = "https://studio.genlayer.com:8443";
 
 export const simulator: SimulatorChain = defineChain({
   id: 61_999,
-  name: "GenLayer Simulator",
+  name: "GenLayer Studio",
   rpcUrls: {
     default: {
       http: [SIMULATOR_JSON_RPC_URL],
@@ -19,7 +19,7 @@ export const simulator: SimulatorChain = defineChain({
   },
   blockExplorers: {
     default: {
-      name: "GenLayer Explorer",
+      name: "GenLayer Studio Explorer",
       url: SIMULATOR_JSON_RPC_URL,
     },
   },
