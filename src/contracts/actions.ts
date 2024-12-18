@@ -1,3 +1,4 @@
+import {decode} from "@/abi/calldata/decoder";
 import {encode, serialize, encodeAndSerialize} from "@/abi/calldata/encoder";
 import {Account, ContractSchema, SimulatorChain, GenLayerClient, CalldataEncodable, Address} from "@/types";
 
@@ -39,7 +40,13 @@ export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) 
       method: "eth_call",
       params: [requestParams, "latest"],
     });
-    return result;
+
+    if (typeof result === "string") {
+      const val = Uint8Array.from(atob(result), c => c.charCodeAt(0));
+      return decode(val);
+    } else {
+      return "<unknown>";
+    }
   };
 
   client.writeContract = async (args: {
