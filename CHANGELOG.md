@@ -1,5 +1,12 @@
 
 
+## 0.4.8 (2024-12-18)
+
+
+### Bug Fixes
+
+* added GenVM decoder to readContract method ([#42](https://github.com/yeagerai/genlayer-js/issues/42)) ([096d36d](https://github.com/yeagerai/genlayer-js/commit/096d36de06d3f4d341f6532ddead694c1882651d))
+
 ## 0.4.7 (2024-12-03)
 
 ## 0.4.6 (2024-12-02)
