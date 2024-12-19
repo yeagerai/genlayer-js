@@ -28,12 +28,14 @@ export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) 
     functionName: string;
     args: CalldataEncodable[];
   }): Promise<unknown> => {
-    const {account, address, functionName, args: params} = args;
-    const encodedData = encodeAndSerialize({method: functionName, args: params});
+    const { account, address, functionName, args: params } = args;
+    const encodedData = encodeAndSerialize({ method: functionName, args: params });
+
+    let senderAddress = account?.address ?? client.account?.address;
 
     const requestParams = {
       to: address,
-      from: account?.address ?? client.account?.address,
+      from: senderAddress,
       data: encodedData,
     };
     const result = await client.request({
@@ -49,6 +51,7 @@ export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) 
     }
   };
 
+
   client.writeContract = async (args: {
     account?: Account;
     address: Address;
@@ -57,14 +60,30 @@ export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) 
     value: bigint;
     leaderOnly?: boolean;
   }): Promise<`0x${string}`> => {
-    const {account, address, functionName, args: params, value = 0n, leaderOnly = false} = args;
-    const data = [encode({method: functionName, args: params}), leaderOnly];
+    const { account, address, functionName, args: params, value = 0n, leaderOnly = false } = args;
+    const data = [encode({ method: functionName, args: params }), leaderOnly];
     const serializedData = serialize(data);
-
     const senderAccount = account || client.account;
+
+
+    if (senderAccount?.type !== "local") {
+
+      const transaction = {
+        from: senderAccount?.address,
+        to: address,
+        data: serializedData,
+        value: `0x${value.toString(16)}`,
+      };
+
+      return await client.request({
+        method: "eth_sendTransaction",
+        params: [transaction as any],
+      });
+    }
+
     if (!senderAccount) {
       throw new Error(
-        "No account set. Configure the client with an account or pass an account to this function.",
+          "No account set. Configure the client with an account or pass an account to this function."
       );
     }
 
@@ -72,7 +91,7 @@ export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) 
       throw new Error("Account does not support signTransaction");
     }
 
-    const nonce = await client.getCurrentNonce({address: senderAccount.address});
+    const nonce = await client.getCurrentNonce({ address: senderAccount.address });
 
     const signedTransaction = await senderAccount.signTransaction({
       data: serializedData,
@@ -81,11 +100,11 @@ export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) 
       type: "legacy",
       nonce,
     });
-    const result = await client.request({
+
+    return await client.request({
       method: "eth_sendRawTransaction",
       params: [signedTransaction],
     });
-    return result;
   };
 
   client.deployContract = async (args: {
@@ -94,14 +113,29 @@ export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) 
     args: CalldataEncodable[];
     leaderOnly?: boolean;
   }) => {
-    const {account, code, args: constructorArgs, leaderOnly = false} = args;
-    const data = [code, encode({args: constructorArgs}), leaderOnly];
+    const { account, code, args: constructorArgs, leaderOnly = false } = args;
+    const data = [code, encode({ args: constructorArgs }), leaderOnly];
     const serializedData = serialize(data);
-
     const senderAccount = account || client.account;
+
+    if (senderAccount?.type !== "local") {
+
+      const transaction = {
+        from: senderAccount?.address,
+        to: null,
+        data: serializedData,
+        value: "0x0",
+      };
+
+      return  await client.request({
+        method: "eth_sendTransaction",
+        params: [transaction as any],
+      });
+    }
+
     if (!senderAccount) {
       throw new Error(
-        "No account set. Configure the client with an account or pass an account to this function.",
+          "No account set. Configure the client with an account or pass an account to this function."
       );
     }
 
@@ -109,7 +143,7 @@ export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) 
       throw new Error("Account does not support signTransaction");
     }
 
-    const nonce = await client.getCurrentNonce({address: senderAccount.address});
+    const nonce = await client.getCurrentNonce({ address: senderAccount.address });
 
     const signedTransaction = await senderAccount.signTransaction({
       data: serializedData,
@@ -117,11 +151,10 @@ export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) 
       nonce,
     });
 
-    const result = await client.request({
+    return  await client.request({
       method: "eth_sendRawTransaction",
       params: [signedTransaction],
     });
-    return result;
   };
 
   return client;
