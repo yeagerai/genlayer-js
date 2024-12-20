@@ -13,16 +13,15 @@ export function accountActions(client: GenLayerClient<SimulatorChain>) {
         params: [address, amount],
       }) as Promise<TransactionHash>;
     },
-    getCurrentNonce: async ({address}: {address: string}): Promise<number> => {
+    getCurrentNonce: async ({address, block = 'latest'}: {address: string, block?: string}): Promise<number> => {
       const addressToUse = address || client.account?.address;
 
       if (!addressToUse) {
         throw new Error("No address provided and no account is connected");
       }
-
       return client.request({
         method: "eth_getTransactionCount",
-        params: [addressToUse],
+        params: [addressToUse, block],
       }) as Promise<number>;
     },
   };
