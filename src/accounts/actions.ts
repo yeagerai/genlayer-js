@@ -19,7 +19,6 @@ export function accountActions(client: GenLayerClient<SimulatorChain>) {
       if (!addressToUse) {
         throw new Error("No address provided and no account is connected");
       }
-      //@ts-ignore
       return client.request({
         method: "eth_getTransactionCount",
         params: [addressToUse, block],
