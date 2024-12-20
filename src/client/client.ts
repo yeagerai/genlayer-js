@@ -3,7 +3,7 @@ import {simulator} from "../chains/simulator";
 import {accountActions} from "../accounts/actions";
 import {contractActions, overrideContractActions} from "../contracts/actions";
 import {transactionActions} from "../transactions/actions";
-import {GenLayerClient, SimulatorChain} from "@/types"
+import {GenLayerClient, SimulatorChain} from "@/types";
 
 // Define the configuration interface for the client
 interface ClientConfig {
