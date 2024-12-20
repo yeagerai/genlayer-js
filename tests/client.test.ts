@@ -83,8 +83,6 @@ describe("Client Overrides", () => {
       account,
     });
 
-    const address = '0x65e03a3e916CF1dC92d3C8E8186a89CfAB0D2bc2';
-
     // Mock the client.request method
     vi.spyOn(client, "request").mockResolvedValue(undefined);
 
@@ -100,7 +98,7 @@ describe("Client Overrides", () => {
       params: [
         {
           to: contractAddress,
-          from: address,
+          from: account,
           data: expect.any(String),
         },
         "latest",
