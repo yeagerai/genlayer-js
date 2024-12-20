@@ -15,13 +15,13 @@ interface ClientConfig {
     blockExplorers?: { default: { name: string; url: string } };
   };
   endpoint?: string; // Custom RPC endpoint
-  accountOrAddress?: Account | Address;
+  account?: Account | Address;
 }
 
 export const createClient = (config: ClientConfig = { chain: simulator }) => {
   const chainConfig = config.chain || simulator;
   const rpcUrl = config.endpoint || chainConfig.rpcUrls.default.http[0];
-  const isAddress = typeof config.accountOrAddress !== "object";
+  const isAddress = typeof config.account !== "object";
 
   const customTransport = {
       async request({method, params}: {method: string; params: any[]}) {
@@ -66,7 +66,7 @@ export const createClient = (config: ClientConfig = { chain: simulator }) => {
   const baseClient = createViemClient({
     chain: chainConfig,
     transport: custom(customTransport),
-    ...(config.accountOrAddress ? {account: config.accountOrAddress} : {}),
+    ...(config.account ? {account: config.account} : {}),
   })
     .extend(publicActions)
     .extend(client => accountActions(client as unknown as GenLayerClient<SimulatorChain>))

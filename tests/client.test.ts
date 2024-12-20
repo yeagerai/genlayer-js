@@ -18,7 +18,7 @@ describe("Client Overrides", () => {
     const account = createAccount(generatePrivateKey());
     const client = createClient({
       chain: simulator,
-      accountOrAddress: account,
+      account: account,
     });
 
     // Mock the client.request method
@@ -45,10 +45,10 @@ describe("Client Overrides", () => {
   });
 
   it("should override client account if account is provided", async () => {
-    const accountOrAddress = createAccount(generatePrivateKey());
+    const account = createAccount(generatePrivateKey());
     const client = createClient({
       chain: simulator,
-      accountOrAddress,
+      account,
     });
 
     const overrideAccount = createAccount(generatePrivateKey());
@@ -77,10 +77,10 @@ describe("Client Overrides", () => {
     });
   });
   it("should override client account if address is provided", async () => {
-    const accountOrAddress = '0x65e03a3e916CF1dC92d3C8E8186a89CfAB0D2bc2';
+    const account = '0x65e03a3e916CF1dC92d3C8E8186a89CfAB0D2bc2';
     const client = createClient({
       chain: simulator,
-      accountOrAddress,
+      account,
     });
 
     const address = '0x65e03a3e916CF1dC92d3C8E8186a89CfAB0D2bc2';

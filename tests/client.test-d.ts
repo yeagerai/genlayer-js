@@ -6,7 +6,7 @@ import {TransactionHash, TransactionStatus} from "../src/types/transactions";
 test("type checks", () => {
   const client = createClient({
     chain: simulator,
-    accountOrAddress: createAccount(generatePrivateKey()),
+    account: createAccount(generatePrivateKey()),
   });
 
   const exampleAddress = "0x1234567890123456789012345678901234567890";
