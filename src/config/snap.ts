@@ -1,0 +1,1 @@
+export const snapId: string = "local:http://localhost:8081";

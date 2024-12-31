@@ -4,8 +4,8 @@ import {accountActions} from "../accounts/actions";
 import {contractActions, overrideContractActions} from "../contracts/actions";
 import {transactionActions} from "../transactions/actions";
 import {GenLayerClient, SimulatorChain} from "@/types";
+import {snapId} from "@/config/snap";
 
-// Define the configuration interface for the client
 interface ClientConfig {
   chain?: {
     id: number;
@@ -25,9 +25,16 @@ export const createClient = (config: ClientConfig = { chain: simulator }) => {
 
   const customTransport = {
       async request({method, params}: {method: string; params: any[]}) {
-        if (method.startsWith('eth_') && isAddress) {
+        console.log('KKKKKKKKKKKKKKKKKKKKK')
+        if (isAddress) {
           try {
-            return await window.ethereum?.request({method, params});
+            return await window.ethereum?.request({
+              method: "wallet_invokeSnap",
+              params: {
+                snapId: snapId,
+                request: { method, params },
+              },
+            });
           } catch (err) {
             console.warn(`Error using window.ethereum for method ${method}:`, err);
             throw err;
