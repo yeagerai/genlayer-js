@@ -27,14 +27,16 @@ export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) 
     address: Address;
     functionName: string;
     args: CalldataEncodable[];
+    stateStatus: string;
   }): Promise<unknown> => {
-    const {account, address, functionName, args: params} = args;
-    const encodedData = encodeAndSerialize({method: functionName, args: params});
+    const {account, address, functionName, args: params, stateStatus} = args;
+    const encodedData = [encode({method: functionName, args: params}), stateStatus];
+    const serializedData = serialize(encodedData);
 
     const requestParams = {
       to: address,
       from: account?.address ?? client.account?.address,
-      data: encodedData,
+      data: serializedData,
     };
     const result = await client.request({
       method: "eth_call",

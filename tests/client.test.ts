@@ -29,6 +29,7 @@ describe("Client Overrides", () => {
       address: contractAddress as Address,
       functionName: "testFunction",
       args: ["arg1", "arg2"],
+      stateStatus: "accepted",
     });
 
     expect(client.request).toHaveBeenCalledWith({
@@ -62,6 +63,7 @@ describe("Client Overrides", () => {
       address: contractAddress as Address,
       functionName: "testFunction",
       args: ["arg1", "arg2"],
+      stateStatus: "accepted",
     });
 
     expect(client.request).toHaveBeenCalledWith({
