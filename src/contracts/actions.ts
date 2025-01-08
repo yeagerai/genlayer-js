@@ -1,5 +1,5 @@
 import {decode} from "@/abi/calldata/decoder";
-import {encode, serialize, encodeAndSerialize} from "@/abi/calldata/encoder";
+import {encode, serialize} from "@/abi/calldata/encoder";
 import {Account, ContractSchema, SimulatorChain, GenLayerClient, CalldataEncodable, Address} from "@/types";
 
 export const contractActions = (client: GenLayerClient<SimulatorChain>) => {
