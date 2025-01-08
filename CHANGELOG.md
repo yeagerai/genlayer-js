@@ -1,5 +1,12 @@
 
 
+## 0.5.0 (2025-01-08)
+
+
+### Features
+
+* add customtransport to use both wallet and local private keys ([#48](https://github.com/yeagerai/genlayer-js/issues/48)) ([905a123](https://github.com/yeagerai/genlayer-js/commit/905a12358c154e6ae865773b809952c8cc9c75b9))
+
 ## 0.4.8 (2024-12-18)
 
 
