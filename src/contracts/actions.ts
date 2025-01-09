@@ -1,6 +1,14 @@
 import {decode} from "@/abi/calldata/decoder";
-import {encode, serialize, encodeAndSerialize} from "@/abi/calldata/encoder";
-import {Account, ContractSchema, SimulatorChain, GenLayerClient, CalldataEncodable, Address} from "@/types";
+import {encode, serialize} from "@/abi/calldata/encoder";
+import {
+  Account,
+  ContractSchema,
+  SimulatorChain,
+  GenLayerClient,
+  CalldataEncodable,
+  Address,
+  TransactionStatus,
+} from "@/types";
 
 export const contractActions = (client: GenLayerClient<SimulatorChain>) => {
   return {
@@ -27,16 +35,18 @@ export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) 
     address: Address;
     functionName: string;
     args: CalldataEncodable[];
+    stateStatus?: TransactionStatus;
   }): Promise<unknown> => {
-    const { account, address, functionName, args: params } = args;
-    const encodedData = encodeAndSerialize({ method: functionName, args: params });
+    const {account, address, functionName, args: params, stateStatus = TransactionStatus.ACCEPTED} = args;
+    const encodedData = [encode({method: functionName, args: params}), stateStatus];
+    const serializedData = serialize(encodedData);
 
-    let senderAddress = account?.address ?? client.account?.address;
+    const senderAddress = account?.address ?? client.account?.address;
 
     const requestParams = {
       to: address,
       from: senderAddress,
-      data: encodedData,
+      data: serializedData,
     };
     const result = await client.request({
       method: "eth_call",
@@ -51,7 +61,6 @@ export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) 
     }
   };
 
-
   client.writeContract = async (args: {
     account?: Account;
     address: Address;
@@ -60,14 +69,12 @@ export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) 
     value: bigint;
     leaderOnly?: boolean;
   }): Promise<`0x${string}`> => {
-    const { account, address, functionName, args: params, value = 0n, leaderOnly = false } = args;
-    const data = [encode({ method: functionName, args: params }), leaderOnly];
+    const {account, address, functionName, args: params, value = 0n, leaderOnly = false} = args;
+    const data = [encode({method: functionName, args: params}), leaderOnly];
     const serializedData = serialize(data);
     const senderAccount = account || client.account;
 
-
     if (senderAccount?.type !== "local") {
-
       const transaction = {
         from: senderAccount?.address,
         to: address,
@@ -83,7 +90,7 @@ export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) 
 
     if (!senderAccount) {
       throw new Error(
-          "No account set. Configure the client with an account or pass an account to this function."
+        "No account set. Configure the client with an account or pass an account to this function.",
       );
     }
 
@@ -91,7 +98,7 @@ export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) 
       throw new Error("Account does not support signTransaction");
     }
 
-    const nonce = await client.getCurrentNonce({ address: senderAccount.address });
+    const nonce = await client.getCurrentNonce({address: senderAccount.address});
 
     const signedTransaction = await senderAccount.signTransaction({
       data: serializedData,
@@ -113,13 +120,12 @@ export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) 
     args: CalldataEncodable[];
     leaderOnly?: boolean;
   }) => {
-    const { account, code, args: constructorArgs, leaderOnly = false } = args;
-    const data = [code, encode({ args: constructorArgs }), leaderOnly];
+    const {account, code, args: constructorArgs, leaderOnly = false} = args;
+    const data = [code, encode({args: constructorArgs}), leaderOnly];
     const serializedData = serialize(data);
     const senderAccount = account || client.account;
 
     if (senderAccount?.type !== "local") {
-
       const transaction = {
         from: senderAccount?.address,
         to: null,
@@ -127,7 +133,7 @@ export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) 
         value: "0x0",
       };
 
-      return  await client.request({
+      return await client.request({
         method: "eth_sendTransaction",
         params: [transaction as any],
       });
@@ -135,7 +141,7 @@ export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) 
 
     if (!senderAccount) {
       throw new Error(
-          "No account set. Configure the client with an account or pass an account to this function."
+        "No account set. Configure the client with an account or pass an account to this function.",
       );
     }
 
@@ -143,7 +149,7 @@ export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) 
       throw new Error("Account does not support signTransaction");
     }
 
-    const nonce = await client.getCurrentNonce({ address: senderAccount.address });
+    const nonce = await client.getCurrentNonce({address: senderAccount.address});
 
     const signedTransaction = await senderAccount.signTransaction({
       data: serializedData,
@@ -151,7 +157,7 @@ export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) 
       nonce,
     });
 
-    return  await client.request({
+    return await client.request({
       method: "eth_sendRawTransaction",
       params: [signedTransaction],
     });

@@ -4,6 +4,7 @@ import {simulator} from "../src/chains/simulator";
 import {Address} from "../src/types/accounts";
 import {createAccount, generatePrivateKey} from "../src/accounts/account";
 import {vi} from "vitest";
+import {TransactionStatus} from "../src/types/transactions";
 
 describe("Client Creation", () => {
   it("should create a client for the simulator", () => {
@@ -29,6 +30,7 @@ describe("Client Overrides", () => {
       address: contractAddress as Address,
       functionName: "testFunction",
       args: ["arg1", "arg2"],
+      stateStatus: TransactionStatus.ACCEPTED,
     });
 
     expect(client.request).toHaveBeenCalledWith({
@@ -62,6 +64,7 @@ describe("Client Overrides", () => {
       address: contractAddress as Address,
       functionName: "testFunction",
       args: ["arg1", "arg2"],
+      stateStatus: TransactionStatus.ACCEPTED,
     });
 
     expect(client.request).toHaveBeenCalledWith({
@@ -77,7 +80,7 @@ describe("Client Overrides", () => {
     });
   });
   it("should override client account if address is provided", async () => {
-    const account = '0x65e03a3e916CF1dC92d3C8E8186a89CfAB0D2bc2';
+    const account = "0x65e03a3e916CF1dC92d3C8E8186a89CfAB0D2bc2";
     const client = createClient({
       chain: simulator,
       account,
@@ -105,5 +108,4 @@ describe("Client Overrides", () => {
       ],
     });
   });
-
 });

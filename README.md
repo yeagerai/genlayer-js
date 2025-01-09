@@ -52,6 +52,7 @@ const result = await client.readContract({
   address: contractAddress,
   functionName: 'get_complete_storage',
   args: []
+  stateStatus: "accepted",
 })
 ```
 
