@@ -1,5 +1,12 @@
 
 
+## 0.6.0 (2025-01-09)
+
+
+### Features
+
+* add stateStatus in readContract ([#50](https://github.com/yeagerai/genlayer-js/issues/50)) ([a9bcf8d](https://github.com/yeagerai/genlayer-js/commit/a9bcf8d83890448b85282ceb0c33060a19ea4e9a))
+
 ## 0.5.0 (2025-01-08)
 
 
