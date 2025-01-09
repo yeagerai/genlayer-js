@@ -1,5 +1,5 @@
 import type {CalldataEncodable} from "../../types/calldata";
-import {Address} from "../../types/calldata";
+import {CalldataAddress} from "../../types/calldata";
 import * as consts from "./consts";
 
 function readULeb128(data: Uint8Array, index: {i: number}): bigint {
@@ -29,7 +29,7 @@ function decodeImpl(data: Uint8Array, index: {i: number}): CalldataEncodable {
     case BigInt(consts.SPECIAL_ADDR): {
       const res = data.slice(index.i, index.i + 20);
       index.i += 20;
-      return new Address(res);
+      return new CalldataAddress(res);
     }
   }
   const type = Number(cur & 0xffn) & ((1 << consts.BITS_IN_TYPE) - 1);
