@@ -13,7 +13,7 @@ export type GenLayerMethod =
   | {method: "gen_getContractSchema"; params: [address: string]}
   | {method: "gen_getContractSchemaForCode"; params: [contractCode: string]}
   | {method: "sim_getTransactionsForAddress"; params: [address: string, filter?: "all" | "from" | "to"]}
-  | {method: "eth_getTransactionCount"; params: [address: string]};
+  | {method: "eth_getTransactionCount"; params: [address: string, block: string]};
 
 /*
   Take all the properties from PublicActions<Transport, TSimulatorChain>

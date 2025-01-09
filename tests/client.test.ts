@@ -18,7 +18,7 @@ describe("Client Overrides", () => {
     const account = createAccount(generatePrivateKey());
     const client = createClient({
       chain: simulator,
-      account,
+      account: account,
     });
 
     // Mock the client.request method
@@ -78,4 +78,34 @@ describe("Client Overrides", () => {
       ],
     });
   });
+  it("should override client account if address is provided", async () => {
+    const account = '0x65e03a3e916CF1dC92d3C8E8186a89CfAB0D2bc2';
+    const client = createClient({
+      chain: simulator,
+      account,
+    });
+
+    // Mock the client.request method
+    vi.spyOn(client, "request").mockResolvedValue(undefined);
+
+    const contractAddress = "0x1234567890123456789012345678901234567890";
+    await client.readContract({
+      address: contractAddress as Address,
+      functionName: "testFunction",
+      args: ["arg1", "arg2"],
+    });
+
+    expect(client.request).toHaveBeenCalledWith({
+      method: "eth_call",
+      params: [
+        {
+          to: contractAddress,
+          from: account,
+          data: expect.any(String),
+        },
+        "latest",
+      ],
+    });
+  });
+
 });
