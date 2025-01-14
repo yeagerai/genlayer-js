@@ -1,5 +1,12 @@
 
 
+## 0.6.1 (2025-01-14)
+
+
+### Bug Fixes
+
+* refactor abi to prevent confusion ([#51](https://github.com/yeagerai/genlayer-js/issues/51)) ([6ccb09e](https://github.com/yeagerai/genlayer-js/commit/6ccb09eba33eaedb147a0dde5112f54d56dd1e09))
+
 ## 0.6.0 (2025-01-09)
 
 
