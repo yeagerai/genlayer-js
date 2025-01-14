@@ -1,8 +1,8 @@
-export class Address {
+export class CalldataAddress {
   bytes: Uint8Array;
 
   constructor(addr: Uint8Array) {
-    if (addr.length != 32) {
+    if (addr.length != 20) {
       throw new Error(`invalid address length ${addr}`);
     }
 
@@ -13,7 +13,7 @@ export class Address {
 export type CalldataEncodable =
   | null
   | boolean
-  | Address
+  | CalldataAddress
   | number
   | bigint
   | string
@@ -26,12 +26,6 @@ export type MethodDescription = {
   method: string;
 
   args: Array<CalldataEncodable>;
-};
-
-export type TransactionData = {
-  method: string;
-
-  args: CalldataEncodable[];
 };
 
 export type TransactionDataElement = string | number | bigint | boolean | Uint8Array;

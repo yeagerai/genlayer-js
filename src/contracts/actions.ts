@@ -1,5 +1,5 @@
-import {decode} from "@/abi/calldata/decoder";
-import {encode, serialize} from "@/abi/calldata/encoder";
+import * as calldata from "@/abi/calldata";
+import {serialize, serializeOne} from "@/abi/transactions";
 import {
   Account,
   ContractSchema,
@@ -9,6 +9,40 @@ import {
   Address,
   TransactionStatus,
 } from "@/types";
+import { fromHex, toHex } from "viem";
+
+function makeCalldataObject(method: string | undefined, args: CalldataEncodable[] | undefined, kwargs: {[key: string]: CalldataEncodable} | Map<string, CalldataEncodable> | undefined): CalldataEncodable {
+  // this method omits args or kwargs if they are empty
+  // it reduces transaction size
+  let ret: {[key: string]: CalldataEncodable} = {}
+
+  if (method) {
+    ret['method'] = method
+  }
+
+  if (args && args.length > 0) {
+    ret['args'] = args
+  }
+
+  if (kwargs) {
+    if (kwargs instanceof Map) {
+      if (kwargs.size > 0) {
+        ret['kwargs'] = kwargs
+      }
+    } else {
+      let hasVal = false
+      for (const _k in kwargs) {
+        hasVal = true;
+        break
+      }
+      if (hasVal) {
+        ret['kwargs'] = kwargs
+      }
+    }
+  }
+
+  return ret
+}
 
 export const contractActions = (client: GenLayerClient<SimulatorChain>) => {
   return {
@@ -19,10 +53,10 @@ export const contractActions = (client: GenLayerClient<SimulatorChain>) => {
       })) as string;
       return schema as unknown as ContractSchema;
     },
-    getContractSchemaForCode: async (contractCode: string): Promise<ContractSchema> => {
+    getContractSchemaForCode: async (contractCode: string | Uint8Array): Promise<ContractSchema> => {
       const schema = (await client.request({
         method: "gen_getContractSchemaForCode",
-        params: [contractCode],
+        params: [toHex(contractCode)],
       })) as string;
       return schema as unknown as ContractSchema;
     },
@@ -30,16 +64,18 @@ export const contractActions = (client: GenLayerClient<SimulatorChain>) => {
 };
 
 export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) => {
-  client.readContract = async (args: {
+  client.readContract = async <RawReturn extends boolean | undefined>(args: {
     account?: Account;
     address: Address;
     functionName: string;
-    args: CalldataEncodable[];
+    args?: CalldataEncodable[];
+    kwargs?: Map<string, CalldataEncodable> | { [key: string]: CalldataEncodable }
     stateStatus?: TransactionStatus;
-  }): Promise<unknown> => {
-    const {account, address, functionName, args: params, stateStatus = TransactionStatus.ACCEPTED} = args;
-    const encodedData = [encode({method: functionName, args: params}), stateStatus];
-    const serializedData = serialize(encodedData);
+    rawReturn?: RawReturn;
+  }): Promise<RawReturn extends true ? `0x${string}` : CalldataEncodable> => {
+    const {account, address, functionName, args: callArgs, kwargs, stateStatus = TransactionStatus.ACCEPTED} = args;
+    const encodedData = calldata.encode(makeCalldataObject(functionName, callArgs, kwargs));
+    const serializedData = serializeOne(encodedData);
 
     const senderAddress = account?.address ?? client.account?.address;
 
@@ -50,27 +86,27 @@ export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) 
     };
     const result = await client.request({
       method: "eth_call",
-      params: [requestParams, "latest"],
+      params: [requestParams, stateStatus == TransactionStatus.FINALIZED ? "finalized" : "latest"],
     });
 
-    if (typeof result === "string") {
-      const val = Uint8Array.from(atob(result), c => c.charCodeAt(0));
-      return decode(val);
-    } else {
-      return "<unknown>";
+    if (args.rawReturn) {
+      return result
     }
+    const resultBinary = fromHex(result, "bytes")
+    return calldata.decode(resultBinary) as any;
   };
 
   client.writeContract = async (args: {
     account?: Account;
     address: Address;
     functionName: string;
-    args: CalldataEncodable[];
+    args?: CalldataEncodable[];
+    kwargs?: Map<string, CalldataEncodable> | { [key: string]: CalldataEncodable }
     value: bigint;
     leaderOnly?: boolean;
   }): Promise<`0x${string}`> => {
-    const {account, address, functionName, args: params, value = 0n, leaderOnly = false} = args;
-    const data = [encode({method: functionName, args: params}), leaderOnly];
+    const {account, address, functionName, args: callArgs, kwargs, value = 0n, leaderOnly = false} = args;
+    const data = [calldata.encode(makeCalldataObject(functionName, callArgs, kwargs)), leaderOnly];
     const serializedData = serialize(data);
     const senderAccount = account || client.account;
 
@@ -116,12 +152,13 @@ export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) 
 
   client.deployContract = async (args: {
     account?: Account;
-    code: string;
-    args: CalldataEncodable[];
+    code: string | Uint8Array;
+    args?: CalldataEncodable[];
+    kwargs?: Map<string, CalldataEncodable> | { [key: string]: CalldataEncodable }
     leaderOnly?: boolean;
   }) => {
-    const {account, code, args: constructorArgs, leaderOnly = false} = args;
-    const data = [code, encode({args: constructorArgs}), leaderOnly];
+    const {account, code, args: constructorArgs, kwargs, leaderOnly = false} = args;
+    const data = [code, calldata.encode(makeCalldataObject(undefined, constructorArgs, kwargs)), leaderOnly];
     const serializedData = serialize(data);
     const senderAccount = account || client.account;
 

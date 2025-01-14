@@ -23,7 +23,7 @@ describe("Client Overrides", () => {
     });
 
     // Mock the client.request method
-    vi.spyOn(client, "request").mockResolvedValue(undefined);
+    vi.spyOn(client, "request").mockResolvedValue("0x00");
 
     const contractAddress = "0x1234567890123456789012345678901234567890";
     await client.readContract({
@@ -56,7 +56,7 @@ describe("Client Overrides", () => {
     const overrideAccount = createAccount(generatePrivateKey());
 
     // Mock the client.request method
-    vi.spyOn(client, "request").mockResolvedValue(undefined);
+    vi.spyOn(client, "request").mockResolvedValue("0x00");
 
     const contractAddress = "0x1234567890123456789012345678901234567890";
     await client.readContract({
@@ -87,7 +87,7 @@ describe("Client Overrides", () => {
     });
 
     // Mock the client.request method
-    vi.spyOn(client, "request").mockResolvedValue(undefined);
+    vi.spyOn(client, "request").mockResolvedValue("0x00");
 
     const contractAddress = "0x1234567890123456789012345678901234567890";
     await client.readContract({
