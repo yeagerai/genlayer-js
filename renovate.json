@@ -15,6 +15,6 @@
   "npm": {
     "minimumReleaseAge": "3 days"
   },
-  "reviewers": ["denishacquin", "epsjunior"],
+  "reviewers": ["denishacquin", "epsjunior", "cristiam86"],
   "baseBranches": ["staging"]
 }
