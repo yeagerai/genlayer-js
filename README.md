@@ -26,11 +26,11 @@ Here’s how to initialize the client and connect to the GenLayer Simulator:
 
 ### Reading a Transaction
 ```typescript
-import { simulator } from 'genlayer-js/chains';
+import { localnet } from 'genlayer-js/chains';
 import { createClient } from "genlayer-js";
 
 const client = createClient({
-  chain: simulator,
+  chain: localnet,
 });
 
 const transactionHash = "0x...";
@@ -40,11 +40,11 @@ const transaction = await client.getTransaction({ hash: transactionHash })
 
 ### Reading a contract
 ```typescript
-import { simulator } from 'genlayer-js/chains';
+import { localnet } from 'genlayer-js/chains';
 import { createClient } from "genlayer-js";
 
 const client = createClient({
-  chain: simulator,
+  chain: localnet,
 });
 
 const result = await client.readContract({
@@ -58,11 +58,11 @@ const result = await client.readContract({
 
 ### Writing a transaction
 ```typescript
-import { simulator } from 'genlayer-js/chains';
+import { localnet } from 'genlayer-js/chains';
 import { createClient, createAccount } from "genlayer-js";
 
 const client = createClient({
-  network: simulator,
+  network: localnet,
 });
 
 const account = createAccount();

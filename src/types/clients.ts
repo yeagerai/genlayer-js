@@ -69,4 +69,5 @@ export type GenLayerClient<TSimulatorChain extends SimulatorChain> = Omit<
     }) => Promise<GenLayerTransaction>;
     getContractSchema: (address: string) => Promise<ContractSchema>;
     getContractSchemaForCode: (contractCode: string | Uint8Array) => Promise<ContractSchema>;
+    connect: (network?: "localnet" | "testnet" | "mainnet") => Promise<void>;
   };
