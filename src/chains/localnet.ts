@@ -6,7 +6,7 @@ const SIMULATOR_JSON_RPC_URL = "http://127.0.0.1:4000/api";
 
 export const localnet: SimulatorChain = defineChain({
   id: 61_999,
-  name: "GenLayer Simulator",
+  name: "Genlayer Localnet",
   rpcUrls: {
     default: {
       http: [SIMULATOR_JSON_RPC_URL],
