@@ -24,4 +24,7 @@ export const simulator: SimulatorChain = defineChain({
     },
   },
   testnet: true,
+  consensusMainContract: null,
+  defaultNumberOfInitialValidators: 5,
+  defaultConsensusMaxRotations: 3,
 });
