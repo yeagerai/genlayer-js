@@ -9,39 +9,43 @@ import {
   Address,
   TransactionStatus,
 } from "@/types";
-import { fromHex, toHex } from "viem";
+import {fromHex, toHex, zeroAddress, encodeFunctionData} from "viem";
 
-function makeCalldataObject(method: string | undefined, args: CalldataEncodable[] | undefined, kwargs: {[key: string]: CalldataEncodable} | Map<string, CalldataEncodable> | undefined): CalldataEncodable {
+function makeCalldataObject(
+  method: string | undefined,
+  args: CalldataEncodable[] | undefined,
+  kwargs: {[key: string]: CalldataEncodable} | Map<string, CalldataEncodable> | undefined,
+): CalldataEncodable {
   // this method omits args or kwargs if they are empty
   // it reduces transaction size
-  let ret: {[key: string]: CalldataEncodable} = {}
+  let ret: {[key: string]: CalldataEncodable} = {};
 
   if (method) {
-    ret['method'] = method
+    ret["method"] = method;
   }
 
   if (args && args.length > 0) {
-    ret['args'] = args
+    ret["args"] = args;
   }
 
   if (kwargs) {
     if (kwargs instanceof Map) {
       if (kwargs.size > 0) {
-        ret['kwargs'] = kwargs
+        ret["kwargs"] = kwargs;
       }
     } else {
-      let hasVal = false
+      let hasVal = false;
       for (const _k in kwargs) {
         hasVal = true;
-        break
+        break;
       }
       if (hasVal) {
-        ret['kwargs'] = kwargs
+        ret["kwargs"] = kwargs;
       }
     }
   }
 
-  return ret
+  return ret;
 }
 
 export const contractActions = (client: GenLayerClient<SimulatorChain>) => {
@@ -69,11 +73,18 @@ export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) 
     address: Address;
     functionName: string;
     args?: CalldataEncodable[];
-    kwargs?: Map<string, CalldataEncodable> | { [key: string]: CalldataEncodable }
+    kwargs?: Map<string, CalldataEncodable> | {[key: string]: CalldataEncodable};
     stateStatus?: TransactionStatus;
     rawReturn?: RawReturn;
   }): Promise<RawReturn extends true ? `0x${string}` : CalldataEncodable> => {
-    const {account, address, functionName, args: callArgs, kwargs, stateStatus = TransactionStatus.ACCEPTED} = args;
+    const {
+      account,
+      address,
+      functionName,
+      args: callArgs,
+      kwargs,
+      stateStatus = TransactionStatus.ACCEPTED,
+    } = args;
     const encodedData = calldata.encode(makeCalldataObject(functionName, callArgs, kwargs));
     const serializedData = serializeOne(encodedData);
 
@@ -90,9 +101,9 @@ export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) 
     });
 
     if (args.rawReturn) {
-      return result
+      return result;
     }
-    const resultBinary = fromHex(result, "bytes")
+    const resultBinary = fromHex(result, "bytes");
     return calldata.decode(resultBinary) as any;
   };
 
@@ -101,103 +112,90 @@ export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) 
     address: Address;
     functionName: string;
     args?: CalldataEncodable[];
-    kwargs?: Map<string, CalldataEncodable> | { [key: string]: CalldataEncodable }
+    kwargs?: Map<string, CalldataEncodable> | {[key: string]: CalldataEncodable};
     value: bigint;
     leaderOnly?: boolean;
   }): Promise<`0x${string}`> => {
     const {account, address, functionName, args: callArgs, kwargs, value = 0n, leaderOnly = false} = args;
     const data = [calldata.encode(makeCalldataObject(functionName, callArgs, kwargs)), leaderOnly];
     const serializedData = serialize(data);
-    const senderAccount = account || client.account;
-
-    if (senderAccount?.type !== "local") {
-      const transaction = {
-        from: senderAccount?.address,
-        to: address,
-        data: serializedData,
-        value: `0x${value.toString(16)}`,
-      };
-
-      return await client.request({
-        method: "eth_sendTransaction",
-        params: [transaction as any],
-      });
-    }
-
-    if (!senderAccount) {
-      throw new Error(
-        "No account set. Configure the client with an account or pass an account to this function.",
-      );
-    }
-
-    if (!senderAccount?.signTransaction) {
-      throw new Error("Account does not support signTransaction");
-    }
-
-    const nonce = await client.getCurrentNonce({address: senderAccount.address});
-
-    const signedTransaction = await senderAccount.signTransaction({
-      data: serializedData,
-      to: address,
-      value,
-      type: "legacy",
-      nonce,
-    });
-
-    return await client.request({
-      method: "eth_sendRawTransaction",
-      params: [signedTransaction],
-    });
+    return _sendTransaction(address, serializedData, account || client.account, value);
   };
 
   client.deployContract = async (args: {
     account?: Account;
     code: string | Uint8Array;
     args?: CalldataEncodable[];
-    kwargs?: Map<string, CalldataEncodable> | { [key: string]: CalldataEncodable }
+    kwargs?: Map<string, CalldataEncodable> | {[key: string]: CalldataEncodable};
     leaderOnly?: boolean;
   }) => {
     const {account, code, args: constructorArgs, kwargs, leaderOnly = false} = args;
     const data = [code, calldata.encode(makeCalldataObject(undefined, constructorArgs, kwargs)), leaderOnly];
     const serializedData = serialize(data);
-    const senderAccount = account || client.account;
+    return _sendTransaction(zeroAddress, serializedData, account || client.account);
+  };
 
-    if (senderAccount?.type !== "local") {
-      const transaction = {
-        from: senderAccount?.address,
-        to: null,
-        data: serializedData,
-        value: "0x0",
-      };
-
-      return await client.request({
-        method: "eth_sendTransaction",
-        params: [transaction as any],
-      });
-    }
-
+  const _sendTransaction = async (
+    recipient: `0x${string}`,
+    data: `0x${string}`,
+    senderAccount?: Account,
+    value?: bigint,
+  ) => {
     if (!senderAccount) {
       throw new Error(
         "No account set. Configure the client with an account or pass an account to this function.",
       );
     }
 
+    if (!client.chain.consensusMainContract?.address) {
+      throw new Error(
+        "Consensus main contract not initialized. Please ensure client is properly initialized.",
+      );
+    }
+
+    const encodedData = encodeFunctionData({
+      abi: client.chain.consensusMainContract?.abi as any,
+      functionName: "addTransaction",
+      args: [
+        senderAccount.address,
+        recipient,
+        client.chain.defaultNumberOfInitialValidators,
+        client.chain.defaultConsensusMaxRotations,
+        data,
+      ],
+    });
+
+    const nonce = await client.getCurrentNonce({address: senderAccount.address});
+    const transactionRequest = await client.prepareTransactionRequest({
+      account: senderAccount,
+      to: client.chain.consensusMainContract?.address as Address,
+      data: encodedData,
+      type: "legacy",
+      nonce,
+      value: value ?? 0n,
+    });
+
+    if (senderAccount?.type !== "local") {
+      const formattedRequest = {
+        from: transactionRequest.from,
+        to: transactionRequest.to,
+        data: encodedData,
+        value: transactionRequest.value ? `0x${transactionRequest.value.toString(16)}` : "0x0",
+      };
+
+      return await client.request({
+        method: "eth_sendTransaction",
+        params: [formattedRequest as any],
+      });
+    }
+
     if (!senderAccount?.signTransaction) {
       throw new Error("Account does not support signTransaction");
     }
 
-    const nonce = await client.getCurrentNonce({address: senderAccount.address});
+    const serializedTransaction = await senderAccount.signTransaction(transactionRequest);
 
-    const signedTransaction = await senderAccount.signTransaction({
-      data: serializedData,
-      type: "legacy",
-      nonce,
-    });
-
-    return await client.request({
-      method: "eth_sendRawTransaction",
-      params: [signedTransaction],
-    });
+    return client.sendRawTransaction({serializedTransaction: serializedTransaction});
   };
 
   return client;
