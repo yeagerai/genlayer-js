@@ -21,7 +21,9 @@ interface ClientConfig {
 
 export const createClient = (config: ClientConfig = {chain: simulator}) => {
   const chainConfig = config.chain || simulator;
-  const rpcUrl = config.endpoint || chainConfig.rpcUrls.default.http[0];
+  if (config.endpoint) {
+    chainConfig.rpcUrls.default.http = [config.endpoint];
+  }
   const isAddress = typeof config.account !== "object";
 
   const customTransport = {
@@ -35,7 +37,7 @@ export const createClient = (config: ClientConfig = {chain: simulator}) => {
         }
       } else {
         try {
-          const response = await fetch(rpcUrl, {
+          const response = await fetch(chainConfig.rpcUrls.default.http[0], {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
