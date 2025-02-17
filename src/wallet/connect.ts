@@ -1,5 +1,6 @@
 import { localnet } from "@/chains/localnet";
 import { GenLayerClient, SimulatorChain } from "@/types";
+import { Network } from "@/types/network";
 
 const GENLAYER_SNAP_ID = "local:http://localhost:8081";
 
@@ -9,7 +10,7 @@ const networks = {
 
 export const connect = async (
   client: GenLayerClient<SimulatorChain>,
-  network: "localnet" | "testnet" | "mainnet" = "localnet"
+  network: Network = "localnet"
 ): Promise<void> => {
   if (!window.ethereum) {
     throw new Error("MetaMask is not installed.");

@@ -1,5 +1,14 @@
 
 
+## 0.6.4 (2025-02-04)
+
+
+### Bug Fixes
+
+* override chain endpoint if extra config provided ([#68](https://github.com/yeagerai/genlayer-js/issues/68)) ([215185a](https://github.com/yeagerai/genlayer-js/commit/215185a4f96d44a60ea1ad4b55c71bd0bdc489f6))
+
+## 0.6.3 (2025-01-28)
+
 ## 0.6.2 (2025-01-20)
 
 ## 0.6.1 (2025-01-14)

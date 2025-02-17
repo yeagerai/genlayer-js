@@ -1,4 +1,4 @@
-import {Transport, Client, PublicActions} from "viem";
+import {Transport, Client, PublicActions, WalletActions} from "viem";
 import {GenLayerTransaction, TransactionHash, TransactionStatus} from "./transactions";
 import {SimulatorChain} from "./chains";
 import {Address, Account} from "./accounts";
@@ -26,6 +26,7 @@ export type GenLayerClient<TSimulatorChain extends SimulatorChain> = Omit<
   Client<Transport, TSimulatorChain>,
   "transport" | "getTransaction" | "readContract"
 > &
+  Omit<WalletActions<TSimulatorChain>, "deployContract" | "writeContract"> &
   Omit<
     PublicActions<Transport, TSimulatorChain>,
     "readContract" | "getTransaction" | "waitForTransactionReceipt"
@@ -41,7 +42,7 @@ export type GenLayerClient<TSimulatorChain extends SimulatorChain> = Omit<
       functionName: string;
       stateStatus?: TransactionStatus;
       args?: CalldataEncodable[];
-      kwargs?: Map<string, CalldataEncodable> | { [key: string]: CalldataEncodable };
+      kwargs?: Map<string, CalldataEncodable> | {[key: string]: CalldataEncodable};
       rawReturn?: RawReturn;
     }) => Promise<RawReturn extends true ? `0x${string}` : CalldataEncodable>;
     writeContract: (args: {
@@ -49,7 +50,7 @@ export type GenLayerClient<TSimulatorChain extends SimulatorChain> = Omit<
       address: Address;
       functionName: string;
       args?: CalldataEncodable[];
-      kwargs?: Map<string, CalldataEncodable> | { [key: string]: CalldataEncodable };
+      kwargs?: Map<string, CalldataEncodable> | {[key: string]: CalldataEncodable};
       value: bigint;
       leaderOnly?: boolean;
     }) => Promise<any>;
@@ -57,7 +58,7 @@ export type GenLayerClient<TSimulatorChain extends SimulatorChain> = Omit<
       account?: Account;
       code: string | Uint8Array;
       args?: CalldataEncodable[];
-      kwargs?: Map<string, CalldataEncodable> | { [key: string]: CalldataEncodable };
+      kwargs?: Map<string, CalldataEncodable> | {[key: string]: CalldataEncodable};
       leaderOnly?: boolean;
     }) => Promise<`0x${string}`>;
     getTransaction: (args: {hash: TransactionHash}) => Promise<GenLayerTransaction>;
@@ -70,5 +71,6 @@ export type GenLayerClient<TSimulatorChain extends SimulatorChain> = Omit<
     }) => Promise<GenLayerTransaction>;
     getContractSchema: (address: string) => Promise<ContractSchema>;
     getContractSchemaForCode: (contractCode: string | Uint8Array) => Promise<ContractSchema>;
+    initializeConsensusSmartContract: (forceReset?: boolean) => Promise<void>;
     connect: (network?: Network) => Promise<void>;
   };
