@@ -4,6 +4,7 @@ import {SimulatorChain} from "./chains";
 import {Address, Account} from "./accounts";
 import {CalldataEncodable} from "./calldata";
 import {ContractSchema} from "./contracts";
+import {Network} from "./network";
 
 export type GenLayerMethod =
   | {method: "sim_fundAccount"; params: [address: string, amount: number]}
@@ -69,5 +70,5 @@ export type GenLayerClient<TSimulatorChain extends SimulatorChain> = Omit<
     }) => Promise<GenLayerTransaction>;
     getContractSchema: (address: string) => Promise<ContractSchema>;
     getContractSchemaForCode: (contractCode: string | Uint8Array) => Promise<ContractSchema>;
-    connect: (network?: "localnet" | "testnet" | "mainnet") => Promise<void>;
+    connect: (network?: Network) => Promise<void>;
   };
