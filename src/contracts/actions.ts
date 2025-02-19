@@ -74,6 +74,7 @@ export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) 
     args?: CalldataEncodable[];
     kwargs?: Map<string, CalldataEncodable> | {[key: string]: CalldataEncodable};
     blockId?: string;
+    leaderResults?: {[key: string]: `0x${string}`};
     rawReturn?: RawReturn;
   }): Promise<RawReturn extends true ? `0x${string}` : CalldataEncodable> => {
     const {
@@ -83,6 +84,7 @@ export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) 
       args: callArgs,
       kwargs,
       blockId,
+      leaderResults,
     } = args;
     const encodedData = calldata.encode(makeCalldataObject(functionName, callArgs, kwargs));
     const serializedData = serializeOne(encodedData);
@@ -94,6 +96,7 @@ export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) 
       from: senderAddress,
       data: serializedData,
       blockId: blockId,
+      leaderResults: leaderResults,
     };
     const result = await client.request({
       method: "gen_call",
