@@ -9,6 +9,7 @@ export type GenLayerMethod =
   | {method: "sim_fundAccount"; params: [address: string, amount: number]}
   | {method: "eth_getTransactionByHash"; params: [hash: TransactionHash]}
   | {method: "eth_call"; params: [requestParams: any, blockNumberOrHash: string]}
+  | {method: "gen_call"; params: [requestParams: any]}
   | {method: "eth_sendRawTransaction"; params: [signedTransaction: string]}
   | {method: "gen_getContractSchema"; params: [address: string]}
   | {method: "gen_getContractSchemaForCode"; params: [contractCode: string]}
@@ -39,7 +40,7 @@ export type GenLayerClient<TSimulatorChain extends SimulatorChain> = Omit<
       account?: Account;
       address: Address;
       functionName: string;
-      stateStatus?: TransactionStatus;
+      blockId?: string;
       args?: CalldataEncodable[];
       kwargs?: Map<string, CalldataEncodable> | {[key: string]: CalldataEncodable};
       rawReturn?: RawReturn;

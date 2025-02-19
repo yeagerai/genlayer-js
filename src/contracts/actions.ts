@@ -6,8 +6,7 @@ import {
   SimulatorChain,
   GenLayerClient,
   CalldataEncodable,
-  Address,
-  TransactionStatus,
+  Address
 } from "@/types";
 import {fromHex, toHex, zeroAddress, encodeFunctionData} from "viem";
 
@@ -74,7 +73,7 @@ export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) 
     functionName: string;
     args?: CalldataEncodable[];
     kwargs?: Map<string, CalldataEncodable> | {[key: string]: CalldataEncodable};
-    stateStatus?: TransactionStatus;
+    blockId?: string;
     rawReturn?: RawReturn;
   }): Promise<RawReturn extends true ? `0x${string}` : CalldataEncodable> => {
     const {
@@ -83,7 +82,7 @@ export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) 
       functionName,
       args: callArgs,
       kwargs,
-      stateStatus = TransactionStatus.ACCEPTED,
+      blockId,
     } = args;
     const encodedData = calldata.encode(makeCalldataObject(functionName, callArgs, kwargs));
     const serializedData = serializeOne(encodedData);
@@ -94,10 +93,11 @@ export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) 
       to: address,
       from: senderAddress,
       data: serializedData,
+      blockId: blockId,
     };
     const result = await client.request({
-      method: "eth_call",
-      params: [requestParams, stateStatus == TransactionStatus.FINALIZED ? "finalized" : "latest"],
+      method: "gen_call",
+      params: [requestParams],
     });
 
     if (args.rawReturn) {
