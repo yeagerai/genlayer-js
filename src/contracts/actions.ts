@@ -104,10 +104,11 @@ export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) 
     });
 
     if (args.rawReturn) {
-      return result;
+      return result as RawReturn extends true ? `0x${string}` : CalldataEncodable;
     }
-    const resultBinary = fromHex(result, "bytes");
-    return calldata.decode(resultBinary) as any;
+
+    const resultBinary = fromHex(result as `0x${string}`, "bytes");
+    return calldata.decode(resultBinary) as RawReturn extends true ? `0x${string}` : CalldataEncodable;
   };
 
   client.writeContract = async (args: {
