@@ -88,7 +88,6 @@ export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) 
     } = args;
     const encodedData = calldata.encode(makeCalldataObject(functionName, callArgs, kwargs));
     const serializedData = serializeOne(encodedData);
-    console.log("blockId", blockId);
 
     const senderAddress = account?.address ?? client.account?.address;
 

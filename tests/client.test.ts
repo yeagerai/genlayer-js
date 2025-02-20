@@ -4,7 +4,6 @@ import {simulator} from "../src/chains/simulator";
 import {Address} from "../src/types/accounts";
 import {createAccount, generatePrivateKey} from "../src/accounts/account";
 import {vi} from "vitest";
-import {TransactionStatus} from "../src/types/transactions";
 
 describe("Client Creation", () => {
   it("should create a client for the simulator", () => {
@@ -30,18 +29,18 @@ describe("Client Overrides", () => {
       address: contractAddress as Address,
       functionName: "testFunction",
       args: ["arg1", "arg2"],
-      stateStatus: TransactionStatus.ACCEPTED,
+      blockId: "latest-nonfinal",
     });
 
     expect(client.request).toHaveBeenCalledWith({
-      method: "eth_call",
+      method: "gen_call",
       params: [
         {
           to: contractAddress,
           from: account.address,
           data: expect.any(String),
+          block_id: "latest-nonfinal",
         },
-        "latest",
       ],
     });
   });
@@ -64,18 +63,18 @@ describe("Client Overrides", () => {
       address: contractAddress as Address,
       functionName: "testFunction",
       args: ["arg1", "arg2"],
-      stateStatus: TransactionStatus.ACCEPTED,
+      blockId: "latest-final",
     });
 
     expect(client.request).toHaveBeenCalledWith({
-      method: "eth_call",
+      method: "gen_call",
       params: [
         {
           to: contractAddress,
           from: overrideAccount.address,
           data: expect.any(String),
+          block_id: "latest-final",
         },
-        "latest",
       ],
     });
   });
@@ -97,14 +96,13 @@ describe("Client Overrides", () => {
     });
 
     expect(client.request).toHaveBeenCalledWith({
-      method: "eth_call",
+      method: "gen_call",
       params: [
         {
           to: contractAddress,
           from: account,
           data: expect.any(String),
         },
-        "latest",
       ],
     });
   });
