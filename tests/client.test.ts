@@ -64,6 +64,7 @@ describe("Client Overrides", () => {
       functionName: "testFunction",
       args: ["arg1", "arg2"],
       blockId: "latest-final",
+      leaderResults: {"0": "0x0123456789012345678901234567890123456789"},
     });
 
     expect(client.request).toHaveBeenCalledWith({
@@ -74,6 +75,7 @@ describe("Client Overrides", () => {
           from: overrideAccount.address,
           data: expect.any(String),
           block_id: "latest-final",
+          leader_results: {"0": "0x0123456789012345678901234567890123456789"},
         },
       ],
     });

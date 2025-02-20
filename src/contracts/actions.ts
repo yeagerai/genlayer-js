@@ -97,7 +97,10 @@ export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) 
       data: serializedData,
       block_id: blockId,
       leader_results: leaderResults,
+      // ...(blockId && { block_id: blockId }),
+      // ...(leaderResults && { leader_results: leaderResults }),
     };
+    
     const result = await client.request({
       method: "gen_call",
       params: [requestParams],
