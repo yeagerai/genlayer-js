@@ -4,8 +4,7 @@ import {simulator} from "../src/chains/simulator";
 import {Address} from "../src/types/accounts";
 import {createAccount, generatePrivateKey} from "../src/accounts/account";
 import {vi} from "vitest";
-import {TransactionStatus} from "../src/types/transactions";
-
+import {BlockId, createArchiveBlockId} from "../src/types/transactions";
 describe("Client Creation", () => {
   it("should create a client for the simulator", () => {
     const client = createClient({chain: simulator});
@@ -30,18 +29,18 @@ describe("Client Overrides", () => {
       address: contractAddress as Address,
       functionName: "testFunction",
       args: ["arg1", "arg2"],
-      stateStatus: TransactionStatus.ACCEPTED,
+      blockId: BlockId.LATEST_FINAL,
     });
 
     expect(client.request).toHaveBeenCalledWith({
-      method: "eth_call",
+      method: "gen_call",
       params: [
         {
           to: contractAddress,
           from: account.address,
           data: expect.any(String),
+          block_id: BlockId.LATEST_FINAL,
         },
-        "latest",
       ],
     });
   });
@@ -64,18 +63,20 @@ describe("Client Overrides", () => {
       address: contractAddress as Address,
       functionName: "testFunction",
       args: ["arg1", "arg2"],
-      stateStatus: TransactionStatus.ACCEPTED,
+      blockId: BlockId.LATEST_NONFINAL,
+      leaderResults: {"0": "0x0123456789012345678901234567890123456789"},
     });
 
     expect(client.request).toHaveBeenCalledWith({
-      method: "eth_call",
+      method: "gen_call",
       params: [
         {
           to: contractAddress,
           from: overrideAccount.address,
           data: expect.any(String),
+          block_id: BlockId.LATEST_NONFINAL,
+          leader_results: {"0": "0x0123456789012345678901234567890123456789"},
         },
-        "latest",
       ],
     });
   });
@@ -97,14 +98,51 @@ describe("Client Overrides", () => {
     });
 
     expect(client.request).toHaveBeenCalledWith({
-      method: "eth_call",
+      method: "gen_call",
       params: [
         {
           to: contractAddress,
           from: account,
           data: expect.any(String),
         },
-        "latest",
+      ],
+    });
+
+    await client.readContract({
+      address: contractAddress as Address,
+      functionName: "testFunction",
+      args: ["arg1", "arg2"],
+      blockId: createArchiveBlockId(1234567),
+    });
+
+    expect(client.request).toHaveBeenCalledWith({
+      method: "gen_call",
+      params: [
+        {
+          to: contractAddress,
+          from: account,
+          data: expect.any(String),
+          block_id: createArchiveBlockId(1234567),
+        },
+      ],
+    });
+
+    await client.readContract({
+      address: contractAddress as Address,
+      functionName: "testFunction",
+      args: ["arg1", "arg2"],
+      blockId: createArchiveBlockId("0xabc1234567890123456789012345678901234567"),
+    });
+
+    expect(client.request).toHaveBeenCalledWith({
+      method: "gen_call",
+      params: [
+        {
+          to: contractAddress,
+          from: account,
+          data: expect.any(String),
+          block_id: createArchiveBlockId("0xabc1234567890123456789012345678901234567"),
+        },
       ],
     });
   });

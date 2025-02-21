@@ -6,10 +6,10 @@ import {
   SimulatorChain,
   GenLayerClient,
   CalldataEncodable,
-  Address,
-  TransactionStatus,
+  Address
 } from "@/types";
 import {fromHex, toHex, zeroAddress, encodeFunctionData} from "viem";
+import {BlockIdParam} from "@/types/transactions";
 
 function makeCalldataObject(
   method: string | undefined,
@@ -74,7 +74,8 @@ export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) 
     functionName: string;
     args?: CalldataEncodable[];
     kwargs?: Map<string, CalldataEncodable> | {[key: string]: CalldataEncodable};
-    stateStatus?: TransactionStatus;
+    blockId?: BlockIdParam;
+    leaderResults?: {[key: string]: `0x${string}`};
     rawReturn?: RawReturn;
   }): Promise<RawReturn extends true ? `0x${string}` : CalldataEncodable> => {
     const {
@@ -83,7 +84,8 @@ export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) 
       functionName,
       args: callArgs,
       kwargs,
-      stateStatus = TransactionStatus.ACCEPTED,
+      blockId,
+      leaderResults,
     } = args;
     const encodedData = calldata.encode(makeCalldataObject(functionName, callArgs, kwargs));
     const serializedData = serializeOne(encodedData);
@@ -94,17 +96,21 @@ export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) 
       to: address,
       from: senderAddress,
       data: serializedData,
+      block_id: blockId,
+      leader_results: leaderResults,
     };
+    
     const result = await client.request({
-      method: "eth_call",
-      params: [requestParams, stateStatus == TransactionStatus.FINALIZED ? "finalized" : "latest"],
+      method: "gen_call",
+      params: [requestParams],
     });
 
     if (args.rawReturn) {
-      return result;
+      return result as RawReturn extends true ? `0x${string}` : CalldataEncodable;
     }
-    const resultBinary = fromHex(result, "bytes");
-    return calldata.decode(resultBinary) as any;
+
+    const resultBinary = fromHex(result as `0x${string}`, "bytes");
+    return calldata.decode(resultBinary) as RawReturn extends true ? `0x${string}` : CalldataEncodable;
   };
 
   client.writeContract = async (args: {
