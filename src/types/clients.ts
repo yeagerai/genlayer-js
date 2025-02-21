@@ -4,6 +4,7 @@ import {SimulatorChain} from "./chains";
 import {Address, Account} from "./accounts";
 import {CalldataEncodable} from "./calldata";
 import {ContractSchema} from "./contracts";
+import {BlockIdParam} from "@/types/transactions";
 
 export type GenLayerMethod =
   | {method: "sim_fundAccount"; params: [address: string, amount: number]}
@@ -40,7 +41,7 @@ export type GenLayerClient<TSimulatorChain extends SimulatorChain> = Omit<
       account?: Account;
       address: Address;
       functionName: string;
-      blockId?: string;
+      blockId?: BlockIdParam;
       leaderResults?: {[key: string]: `0x${string}`};
       args?: CalldataEncodable[];
       kwargs?: Map<string, CalldataEncodable> | {[key: string]: CalldataEncodable};

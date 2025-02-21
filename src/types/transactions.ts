@@ -46,3 +46,17 @@ export type GenLayerTransaction = {
 };
 
 export type TransactionDataElement = string | number | bigint | boolean | Uint8Array;
+
+export enum BlockId {
+  LATEST_FINAL = "latest-final",
+  LATEST_NONFINAL = "latest-nonfinal"
+}
+
+export type ArchiveBlockId = `archive:${string}`;
+
+export type BlockIdParam = BlockId | ArchiveBlockId;
+
+export function createArchiveBlockId(identifier: string | number): ArchiveBlockId {
+  return `archive:${identifier}` as ArchiveBlockId;
+}
+

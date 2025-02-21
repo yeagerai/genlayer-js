@@ -9,6 +9,7 @@ import {
   Address
 } from "@/types";
 import {fromHex, toHex, zeroAddress, encodeFunctionData} from "viem";
+import {BlockIdParam} from "@/types/transactions";
 
 function makeCalldataObject(
   method: string | undefined,
@@ -73,7 +74,7 @@ export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) 
     functionName: string;
     args?: CalldataEncodable[];
     kwargs?: Map<string, CalldataEncodable> | {[key: string]: CalldataEncodable};
-    blockId?: string;
+    blockId?: BlockIdParam;
     leaderResults?: {[key: string]: `0x${string}`};
     rawReturn?: RawReturn;
   }): Promise<RawReturn extends true ? `0x${string}` : CalldataEncodable> => {
