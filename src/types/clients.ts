@@ -52,6 +52,7 @@ export type GenLayerClient<TSimulatorChain extends SimulatorChain> = Omit<
       kwargs?: Map<string, CalldataEncodable> | {[key: string]: CalldataEncodable};
       value: bigint;
       leaderOnly?: boolean;
+      consensusMaxRotations?: number;
     }) => Promise<any>;
     deployContract: (args: {
       account?: Account;
@@ -59,6 +60,7 @@ export type GenLayerClient<TSimulatorChain extends SimulatorChain> = Omit<
       args?: CalldataEncodable[];
       kwargs?: Map<string, CalldataEncodable> | {[key: string]: CalldataEncodable};
       leaderOnly?: boolean;
+      consensusMaxRotations?: number;
     }) => Promise<`0x${string}`>;
     getTransaction: (args: {hash: TransactionHash}) => Promise<GenLayerTransaction>;
     getCurrentNonce: (args: {address: string}) => Promise<number>;

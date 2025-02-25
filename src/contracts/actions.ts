@@ -115,11 +115,12 @@ export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) 
     kwargs?: Map<string, CalldataEncodable> | {[key: string]: CalldataEncodable};
     value: bigint;
     leaderOnly?: boolean;
+    consensusMaxRotations?: number;
   }): Promise<`0x${string}`> => {
-    const {account, address, functionName, args: callArgs, kwargs, value = 0n, leaderOnly = false} = args;
+    const {account, address, functionName, args: callArgs, kwargs, value = 0n, leaderOnly = false, consensusMaxRotations = client.chain.defaultConsensusMaxRotations} = args;
     const data = [calldata.encode(makeCalldataObject(functionName, callArgs, kwargs)), leaderOnly];
     const serializedData = serialize(data);
-    return _sendTransaction(address, serializedData, account || client.account, value);
+    return _sendTransaction(address, serializedData, account || client.account, consensusMaxRotations, value);
   };
 
   client.deployContract = async (args: {
@@ -128,17 +129,19 @@ export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) 
     args?: CalldataEncodable[];
     kwargs?: Map<string, CalldataEncodable> | {[key: string]: CalldataEncodable};
     leaderOnly?: boolean;
+    consensusMaxRotations?: number;
   }) => {
-    const {account, code, args: constructorArgs, kwargs, leaderOnly = false} = args;
+    const {account, code, args: constructorArgs, kwargs, leaderOnly = false, consensusMaxRotations = client.chain.defaultConsensusMaxRotations} = args;
     const data = [code, calldata.encode(makeCalldataObject(undefined, constructorArgs, kwargs)), leaderOnly];
     const serializedData = serialize(data);
-    return _sendTransaction(zeroAddress, serializedData, account || client.account);
+    return _sendTransaction(zeroAddress, serializedData, account || client.account, consensusMaxRotations);
   };
 
   const _sendTransaction = async (
     recipient: `0x${string}`,
     data: `0x${string}`,
     senderAccount?: Account,
+    consensusMaxRotations?: number,
     value?: bigint,
   ) => {
     if (!senderAccount) {
@@ -160,7 +163,7 @@ export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) 
         senderAccount.address,
         recipient,
         client.chain.defaultNumberOfInitialValidators,
-        client.chain.defaultConsensusMaxRotations,
+        consensusMaxRotations,
         data,
       ],
     });
