@@ -5,7 +5,8 @@ import {Address, Account} from "./accounts";
 import {CalldataEncodable} from "./calldata";
 import {ContractSchema} from "./contracts";
 import {Network} from "./network";
-import {SnapSourse} from "@/types/snapSourse";
+import {SnapSource} from "@/types/snapSource";
+import {MetaMaskClientResult} from "@/types/metamaskClientResult";
 
 export type GenLayerMethod =
   | {method: "sim_fundAccount"; params: [address: string, amount: number]}
@@ -73,5 +74,6 @@ export type GenLayerClient<TSimulatorChain extends SimulatorChain> = Omit<
     getContractSchema: (address: string) => Promise<ContractSchema>;
     getContractSchemaForCode: (contractCode: string | Uint8Array) => Promise<ContractSchema>;
     initializeConsensusSmartContract: (forceReset?: boolean) => Promise<void>;
-    connect: (network?: Network, snapSource?: SnapSourse) => Promise<void>;
+    connect: (network?: Network, snapSource?: SnapSource) => Promise<void>;
+    metamaskClient: (snapSource?: SnapSource) => Promise<MetaMaskClientResult>;
   };

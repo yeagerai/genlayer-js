@@ -1,7 +1,7 @@
 import { localnet } from "@/chains/localnet";
 import { GenLayerClient, SimulatorChain } from "@/types";
 import { Network } from "@/types/network";
-import { SnapSourse } from "@/types/snapSourse";
+import { SnapSource } from "@/types/snapSource";
 import { snapID } from "@/config/snapID";
 
 const networks = {
@@ -11,7 +11,7 @@ const networks = {
 export const connect = async (
   client: GenLayerClient<SimulatorChain>,
   network: Network = "localnet",
-  snapSource: SnapSourse = 'local'
+  snapSource: SnapSource = 'npm'
 ): Promise<void> => {
   if (!window.ethereum) {
     throw new Error("MetaMask is not installed.");
@@ -23,10 +23,6 @@ export const connect = async (
   const selectedNetwork = networks[network];
   if (!selectedNetwork) {
     throw new Error(`Network configuration for '${network}' is not available.`);
-  }
-
-  if(snapSource === 'npm'){
-    throw new Error(`The '${snapSource}' snap is not available yet. Please use 'local' instead.`);
   }
 
   const chainIdHex = `0x${selectedNetwork.id.toString(16)}`;
@@ -50,7 +46,7 @@ export const connect = async (
     });
   }
 
-  const id = snapSource === 'local' ? snapID.local : '';
+  const id = snapSource === 'local' ? snapID.local : snapID.npm;
   const installedSnaps: any = await window.ethereum.request({ method: "wallet_getSnaps" });
   const isGenLayerSnapInstalled = Object.values(installedSnaps).some(
     (snap: any) => snap.id === id
