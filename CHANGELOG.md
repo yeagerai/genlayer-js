@@ -1,5 +1,12 @@
 
 
+## 0.7.0 (2025-03-05)
+
+
+### Features
+
+* connect ([#58](https://github.com/yeagerai/genlayer-js/issues/58)) ([7e396c7](https://github.com/yeagerai/genlayer-js/commit/7e396c765536ef0ec1a81c259c113587dc6de8ee))
+
 ## 0.6.4 (2025-02-04)
 
 
