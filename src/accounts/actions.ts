@@ -1,11 +1,11 @@
 import {GenLayerClient, TransactionHash, SimulatorChain} from "../types";
-import {simulator} from "../chains";
+import {localnet} from "../chains";
 
 export function accountActions(client: GenLayerClient<SimulatorChain>) {
   return {
     fundAccount: async ({address, amount}: {address: string; amount: number}): Promise<TransactionHash> => {
-      if (client.chain?.id !== simulator.id) {
-        throw new Error("Client is not connected to the simulator");
+      if (client.chain?.id !== localnet.id) {
+        throw new Error("Client is not connected to the localnet");
       }
 
       return client.request({
