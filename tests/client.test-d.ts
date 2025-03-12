@@ -1,11 +1,11 @@
 import {createClient} from "../src/client/client";
-import {simulator} from "../src/chains/simulator";
+import {localnet} from "@/chains/localnet";
 import {createAccount, generatePrivateKey} from "../src/accounts/account";
 import {TransactionHash, TransactionStatus} from "../src/types/transactions";
 
 test("type checks", () => {
   const client = createClient({
-    chain: simulator,
+    chain: localnet,
     account: createAccount(generatePrivateKey()),
   });
 

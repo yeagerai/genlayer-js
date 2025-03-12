@@ -1,0 +1,1 @@
+export type Network = 'localnet' | 'testnet' | 'mainnet';

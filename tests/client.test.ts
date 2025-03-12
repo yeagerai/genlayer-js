@@ -1,15 +1,15 @@
 // tests/client.test.ts
 import {createClient} from "../src/client/client";
-import {simulator} from "../src/chains/simulator";
+import {localnet} from "@/chains/localnet";
 import {Address} from "../src/types/accounts";
 import {createAccount, generatePrivateKey} from "../src/accounts/account";
 import {vi} from "vitest";
 import {BlockId, createArchiveBlockId} from "../src/types/transactions";
 describe("Client Creation", () => {
-  it("should create a client for the simulator", () => {
-    const client = createClient({chain: simulator});
+  it("should create a client for the localnet", () => {
+    const client = createClient({chain: localnet});
     expect(client).toBeDefined();
-    expect(client.chain).toBe(simulator);
+    expect(client.chain).toBe(localnet);
   });
 });
 
@@ -17,7 +17,7 @@ describe("Client Overrides", () => {
   it("should default to client account if no account is provided", async () => {
     const account = createAccount(generatePrivateKey());
     const client = createClient({
-      chain: simulator,
+      chain: localnet,
       account: account,
     });
 
@@ -48,7 +48,7 @@ describe("Client Overrides", () => {
   it("should override client account if account is provided", async () => {
     const account = createAccount(generatePrivateKey());
     const client = createClient({
-      chain: simulator,
+      chain: localnet,
       account,
     });
 
@@ -83,7 +83,7 @@ describe("Client Overrides", () => {
   it("should override client account if address is provided", async () => {
     const account = "0x65e03a3e916CF1dC92d3C8E8186a89CfAB0D2bc2";
     const client = createClient({
-      chain: simulator,
+      chain: localnet,
       account,
     });
 

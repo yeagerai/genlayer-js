@@ -5,6 +5,7 @@ import {Address, Account} from "./accounts";
 import {CalldataEncodable} from "./calldata";
 import {ContractSchema} from "./contracts";
 import {BlockIdParam} from "@/types/transactions";
+import {Network} from "./network";
 
 export type GenLayerMethod =
   | {method: "sim_fundAccount"; params: [address: string, amount: number]}
@@ -55,6 +56,7 @@ export type GenLayerClient<TSimulatorChain extends SimulatorChain> = Omit<
       kwargs?: Map<string, CalldataEncodable> | {[key: string]: CalldataEncodable};
       value: bigint;
       leaderOnly?: boolean;
+      consensusMaxRotations?: number;
     }) => Promise<any>;
     deployContract: (args: {
       account?: Account;
@@ -62,6 +64,7 @@ export type GenLayerClient<TSimulatorChain extends SimulatorChain> = Omit<
       args?: CalldataEncodable[];
       kwargs?: Map<string, CalldataEncodable> | {[key: string]: CalldataEncodable};
       leaderOnly?: boolean;
+      consensusMaxRotations?: number;
     }) => Promise<`0x${string}`>;
     getTransaction: (args: {hash: TransactionHash}) => Promise<GenLayerTransaction>;
     getCurrentNonce: (args: {address: string}) => Promise<number>;
@@ -74,4 +77,6 @@ export type GenLayerClient<TSimulatorChain extends SimulatorChain> = Omit<
     getContractSchema: (address: string) => Promise<ContractSchema>;
     getContractSchemaForCode: (contractCode: string | Uint8Array) => Promise<ContractSchema>;
     initializeConsensusSmartContract: (forceReset?: boolean) => Promise<void>;
+    connect: (network?: Network, snapSource?: SnapSource) => Promise<void>;
+    metamaskClient: (snapSource?: SnapSource) => Promise<MetaMaskClientResult>;
   };

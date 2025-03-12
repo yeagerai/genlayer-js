@@ -1,0 +1,1 @@
+export type SnapSource = 'npm' | 'local';

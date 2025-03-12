@@ -1,10 +1,11 @@
 import {Account, createClient as createViemClient, publicActions, custom, Address, walletActions} from "viem";
-import {simulator} from "../chains/simulator";
 import {accountActions} from "../accounts/actions";
 import {contractActions, overrideContractActions} from "../contracts/actions";
 import {transactionActions} from "../transactions/actions";
+import {walletActions as genlayerWalletActions} from "../wallet/actions";
 import {GenLayerClient, SimulatorChain} from "@/types";
 import {chainActions} from "@/chains/actions";
+import {localnet} from "@/chains";
 
 // Define the configuration interface for the client
 interface ClientConfig {
@@ -19,8 +20,8 @@ interface ClientConfig {
   account?: Account | Address;
 }
 
-export const createClient = (config: ClientConfig = {chain: simulator}) => {
-  const chainConfig = config.chain || simulator;
+export const createClient = (config: ClientConfig = {chain: localnet}) => {
+  const chainConfig = config.chain || localnet;
   if (config.endpoint) {
     chainConfig.rpcUrls.default.http = [config.endpoint];
   }
@@ -75,7 +76,8 @@ export const createClient = (config: ClientConfig = {chain: simulator}) => {
     .extend(client => accountActions(client as unknown as GenLayerClient<SimulatorChain>))
     .extend(client => transactionActions(client as unknown as GenLayerClient<SimulatorChain>))
     .extend(client => contractActions(client as unknown as GenLayerClient<SimulatorChain>))
-    .extend(client => chainActions(client as unknown as GenLayerClient<SimulatorChain>));
+    .extend(client => chainActions(client as unknown as GenLayerClient<SimulatorChain>))
+    .extend((client) => genlayerWalletActions(client as unknown as GenLayerClient<SimulatorChain>));
 
   // Initialize in the background
   baseClient.initializeConsensusSmartContract().catch(error => {

@@ -1,5 +1,26 @@
 
 
+## 0.9.0 (2025-03-12)
+
+
+### Features
+
+* decoding params ([#77](https://github.com/yeagerai/genlayer-js/issues/77)) ([ada41ce](https://github.com/yeagerai/genlayer-js/commit/ada41ce375eaf6a94886bc50c13c3f0df247d7c2))
+
+## 0.8.0 (2025-03-12)
+
+
+### Features
+
+* overwrite defaultConsensusMaxRotations ([#75](https://github.com/yeagerai/genlayer-js/issues/75)) ([8d64b42](https://github.com/yeagerai/genlayer-js/commit/8d64b428d8232394cfe1ac5b56edba7c1837d0e5))
+
+## 0.7.0 (2025-03-05)
+
+
+### Features
+
+* connect ([#58](https://github.com/yeagerai/genlayer-js/issues/58)) ([7e396c7](https://github.com/yeagerai/genlayer-js/commit/7e396c765536ef0ec1a81c259c113587dc6de8ee))
+
 ## 0.6.4 (2025-02-04)
 
 
