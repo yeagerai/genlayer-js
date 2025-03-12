@@ -1,5 +1,12 @@
 
 
+## 0.8.0 (2025-03-12)
+
+
+### Features
+
+* overwrite defaultConsensusMaxRotations ([#75](https://github.com/yeagerai/genlayer-js/issues/75)) ([8d64b42](https://github.com/yeagerai/genlayer-js/commit/8d64b428d8232394cfe1ac5b56edba7c1837d0e5))
+
 ## 0.7.0 (2025-03-05)
 
 
