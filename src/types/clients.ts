@@ -4,14 +4,14 @@ import {SimulatorChain} from "./chains";
 import {Address, Account} from "./accounts";
 import {CalldataEncodable} from "./calldata";
 import {ContractSchema} from "./contracts";
+import {BlockIdParam} from "@/types/transactions";
 import {Network} from "./network";
-import {SnapSource} from "@/types/snapSource";
-import {MetaMaskClientResult} from "@/types/metamaskClientResult";
 
 export type GenLayerMethod =
   | {method: "sim_fundAccount"; params: [address: string, amount: number]}
   | {method: "eth_getTransactionByHash"; params: [hash: TransactionHash]}
   | {method: "eth_call"; params: [requestParams: any, blockNumberOrHash: string]}
+  | {method: "gen_call"; params: [requestParams: any]}
   | {method: "eth_sendRawTransaction"; params: [signedTransaction: string]}
   | {method: "gen_getContractSchema"; params: [address: string]}
   | {method: "gen_getContractSchemaForCode"; params: [contractCode: string]}
@@ -42,7 +42,8 @@ export type GenLayerClient<TSimulatorChain extends SimulatorChain> = Omit<
       account?: Account;
       address: Address;
       functionName: string;
-      stateStatus?: TransactionStatus;
+      blockId?: BlockIdParam;
+      leaderResults?: {[key: string]: `0x${string}`};
       args?: CalldataEncodable[];
       kwargs?: Map<string, CalldataEncodable> | {[key: string]: CalldataEncodable};
       rawReturn?: RawReturn;
