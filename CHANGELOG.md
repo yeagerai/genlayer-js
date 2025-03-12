@@ -1,5 +1,12 @@
 
 
+## 0.9.0 (2025-03-12)
+
+
+### Features
+
+* decoding params ([#77](https://github.com/yeagerai/genlayer-js/issues/77)) ([ada41ce](https://github.com/yeagerai/genlayer-js/commit/ada41ce375eaf6a94886bc50c13c3f0df247d7c2))
+
 ## 0.8.0 (2025-03-12)
 
 
