@@ -120,7 +120,14 @@ export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) 
     const {account, address, functionName, args: callArgs, kwargs, value = 0n, leaderOnly = false, consensusMaxRotations = client.chain.defaultConsensusMaxRotations} = args;
     const data = [calldata.encode(makeCalldataObject(functionName, callArgs, kwargs)), leaderOnly];
     const serializedData = serialize(data);
-    return _sendTransaction(address, serializedData, account || client.account, consensusMaxRotations, value);
+    return _sendTransaction({
+      recipient: address,
+      data: serializedData,
+      senderAccount: account || client.account,
+      consensusMaxRotations,
+      value,
+      appeal: false
+    });
   };
 
   client.deployContract = async (args: {
@@ -134,16 +141,44 @@ export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) 
     const {account, code, args: constructorArgs, kwargs, leaderOnly = false, consensusMaxRotations = client.chain.defaultConsensusMaxRotations} = args;
     const data = [code, calldata.encode(makeCalldataObject(undefined, constructorArgs, kwargs)), leaderOnly];
     const serializedData = serialize(data);
-    return _sendTransaction(zeroAddress, serializedData, account || client.account, consensusMaxRotations);
+    return _sendTransaction({
+      recipient: zeroAddress,
+      data: serializedData,
+      senderAccount: account || client.account,
+      consensusMaxRotations,
+      appeal: false
+    });
   };
 
-  const _sendTransaction = async (
-    recipient: `0x${string}`,
-    data: `0x${string}`,
+  client.appealTransaction = async (args: {
+    account?: Account;
+    txId: `0x${string}`;
+  }) => {
+    const {account, txId} = args;
+    return _sendTransaction({
+      senderAccount: account || client.account,
+      appeal: true,
+      txId
+    });
+  };
+
+  const _sendTransaction = async ({
+    recipient,
+    data,
+    senderAccount,
+    consensusMaxRotations,
+    value,
+    appeal = false,
+    txId
+  }: {
+    recipient?: `0x${string}`,
+    data?: `0x${string}`,
     senderAccount?: Account,
     consensusMaxRotations?: number,
     value?: bigint,
-  ) => {
+    appeal?: boolean,
+    txId?: `0x${string}`
+  }) => {
     if (!senderAccount) {
       throw new Error(
         "No account set. Configure the client with an account or pass an account to this function.",
@@ -156,17 +191,28 @@ export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) 
       );
     }
 
-    const encodedData = encodeFunctionData({
-      abi: client.chain.consensusMainContract?.abi as any,
-      functionName: "addTransaction",
-      args: [
-        senderAccount.address,
-        recipient,
-        client.chain.defaultNumberOfInitialValidators,
-        consensusMaxRotations,
-        data,
-      ],
-    });
+    let encodedData: `0x${string}`;
+    if (appeal) {
+      encodedData = encodeFunctionData({
+        abi: client.chain.consensusMainContract?.abi as any,
+        functionName: "submitAppeal",
+        args: [
+          txId,
+        ],
+      });
+    } else {
+      encodedData = encodeFunctionData({
+        abi: client.chain.consensusMainContract?.abi as any,
+        functionName: "addTransaction",
+        args: [
+          senderAccount.address,
+          recipient,
+          client.chain.defaultNumberOfInitialValidators,
+          consensusMaxRotations,
+          data,
+        ],
+      });
+    }
 
     const nonce = await client.getCurrentNonce({address: senderAccount.address});
     const transactionRequest = await client.prepareTransactionRequest({
