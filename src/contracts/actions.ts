@@ -117,7 +117,16 @@ export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) 
     leaderOnly?: boolean;
     consensusMaxRotations?: number;
   }): Promise<`0x${string}`> => {
-    const {account, address, functionName, args: callArgs, kwargs, value = 0n, leaderOnly = false, consensusMaxRotations = client.chain.defaultConsensusMaxRotations} = args;
+    const {
+      account,
+      address,
+      functionName,
+      args: callArgs,
+      kwargs,
+      value = 0n,
+      leaderOnly = false,
+      consensusMaxRotations = client.chain.defaultConsensusMaxRotations,
+    } = args;
     const data = [calldata.encode(makeCalldataObject(functionName, callArgs, kwargs)), leaderOnly];
     const serializedData = serialize(data);
     return _sendTransaction(address, serializedData, account || client.account, consensusMaxRotations, value);
@@ -131,7 +140,14 @@ export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) 
     leaderOnly?: boolean;
     consensusMaxRotations?: number;
   }) => {
-    const {account, code, args: constructorArgs, kwargs, leaderOnly = false, consensusMaxRotations = client.chain.defaultConsensusMaxRotations} = args;
+    const {
+      account,
+      code,
+      args: constructorArgs,
+      kwargs,
+      leaderOnly = false,
+      consensusMaxRotations = client.chain.defaultConsensusMaxRotations,
+    } = args;
     const data = [code, calldata.encode(makeCalldataObject(undefined, constructorArgs, kwargs)), leaderOnly];
     const serializedData = serialize(data);
     return _sendTransaction(zeroAddress, serializedData, account || client.account, consensusMaxRotations);

@@ -28,7 +28,7 @@ export const createClient = (config: ClientConfig = {chain: localnet}) => {
   const isAddress = typeof config.account !== "object";
 
   const customTransport = {
-    async request({method, params}: {method: string; params: any[]}) {
+    async request({method, params = []}: {method: string; params: any[]}) {
       if (method.startsWith("eth_") && isAddress) {
         try {
           return await window.ethereum?.request({method, params});
@@ -77,7 +77,7 @@ export const createClient = (config: ClientConfig = {chain: localnet}) => {
     .extend(client => transactionActions(client as unknown as GenLayerClient<SimulatorChain>))
     .extend(client => contractActions(client as unknown as GenLayerClient<SimulatorChain>))
     .extend(client => chainActions(client as unknown as GenLayerClient<SimulatorChain>))
-    .extend((client) => genlayerWalletActions(client as unknown as GenLayerClient<SimulatorChain>));
+    .extend(client => genlayerWalletActions(client as unknown as GenLayerClient<SimulatorChain>));
 
   // Initialize in the background
   baseClient.initializeConsensusSmartContract().catch(error => {
