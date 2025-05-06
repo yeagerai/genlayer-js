@@ -174,7 +174,7 @@ export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) 
       to: client.chain.consensusMainContract?.address as Address,
       data: encodedData,
       type: "legacy",
-      nonce,
+      nonce: Number(nonce),
       value: value ?? 0n,
     });
 
