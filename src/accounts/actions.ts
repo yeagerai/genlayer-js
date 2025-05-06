@@ -13,7 +13,13 @@ export function accountActions(client: GenLayerClient<SimulatorChain>) {
         params: [address, amount],
       }) as Promise<TransactionHash>;
     },
-    getCurrentNonce: async ({address, block = 'latest'}: {address: string, block?: string}): Promise<number> => {
+    getCurrentNonce: async ({
+      address,
+      block = "latest",
+    }: {
+      address: string;
+      block?: string;
+    }): Promise<number> => {
       const addressToUse = address || client.account?.address;
 
       if (!addressToUse) {
