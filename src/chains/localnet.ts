@@ -1,10 +1,10 @@
 import {defineChain} from "viem";
-import {SimulatorChain} from "@/types";
+import {GenLayerChain} from "@/types";
 
 // chains/localnet.ts
 const SIMULATOR_JSON_RPC_URL = "http://127.0.0.1:4000/api";
 
-export const localnet: SimulatorChain = defineChain({
+export const localnet: GenLayerChain = defineChain({
   id: 61_999,
   name: "Genlayer Localnet",
   rpcUrls: {

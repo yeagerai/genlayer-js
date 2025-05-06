@@ -1,6 +1,6 @@
 import {Chain} from "viem";
 
-export type SimulatorChain = Chain & {
+export type GenLayerChain = Chain & {
   consensusMainContract: {
     address: string;
     abi: any[];

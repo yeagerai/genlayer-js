@@ -1,6 +1,6 @@
 import {Transport, Client, PublicActions, WalletActions} from "viem";
 import {GenLayerTransaction, TransactionHash, TransactionStatus} from "./transactions";
-import {SimulatorChain} from "./chains";
+import {GenLayerChain} from "./chains";
 import {Address, Account} from "./accounts";
 import {CalldataEncodable} from "./calldata";
 import {ContractSchema} from "./contracts";
@@ -18,22 +18,23 @@ export type GenLayerMethod =
   | {method: "sim_getTransactionsForAddress"; params: [address: string, filter?: "all" | "from" | "to"]}
   | {method: "eth_getTransactionCount"; params: [address: string, block: string]};
 
+export type GenLayerChain = GenLayerChain;
 /*
-  Take all the properties from PublicActions<Transport, TSimulatorChain>
+  Take all the properties from PublicActions<Transport, TGenLayerChain>
   Remove the transport, readContract, and getTransaction properties
   The resulting type will have everything from PublicActions EXCEPT those
   two properties which are added later
 */
-export type GenLayerClient<TSimulatorChain extends SimulatorChain> = Omit<
-  Client<Transport, TSimulatorChain>,
+export type GenLayerClient<TGenLayerChain extends GenLayerChain> = Omit<
+  Client<Transport, TGenLayerChain>,
   "transport" | "getTransaction" | "readContract"
 > &
-  Omit<WalletActions<TSimulatorChain>, "deployContract" | "writeContract"> &
+  Omit<WalletActions<TGenLayerChain>, "deployContract" | "writeContract"> &
   Omit<
-    PublicActions<Transport, TSimulatorChain>,
+    PublicActions<Transport, TGenLayerChain>,
     "readContract" | "getTransaction" | "waitForTransactionReceipt"
   > & {
-    request: Client<Transport, TSimulatorChain>["request"] & {
+    request: Client<Transport, TGenLayerChain>["request"] & {
       <TMethod extends GenLayerMethod>(
         args: Extract<GenLayerMethod, {method: TMethod["method"]}>,
       ): Promise<unknown>;

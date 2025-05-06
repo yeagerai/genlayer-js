@@ -1,5 +1,5 @@
 import {defineChain} from "viem";
-import {SimulatorChain} from "@/types";
+import {GenLayerChain} from "@/types";
 
 // chains/localnet.ts
 const TESTNET_JSON_RPC_URL = " http://34.32.169.58:9151";
@@ -1436,7 +1436,7 @@ const CONSENSUS_MAIN_CONTRACT = {
   bytecode: "",
 };
 
-export const testnet: SimulatorChain = defineChain({
+export const testnet: GenLayerChain = defineChain({
   id: 0x107d,
   name: "Genlayer Testnet",
   rpcUrls: {

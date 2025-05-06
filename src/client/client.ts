@@ -3,7 +3,7 @@ import {accountActions} from "../accounts/actions";
 import {contractActions, overrideContractActions} from "../contracts/actions";
 import {transactionActions} from "../transactions/actions";
 import {walletActions as genlayerWalletActions} from "../wallet/actions";
-import {GenLayerClient, SimulatorChain} from "@/types";
+import {GenLayerClient, GenLayerChain} from "@/types";
 import {chainActions} from "@/chains/actions";
 import {localnet} from "@/chains";
 
@@ -20,14 +20,10 @@ interface ClientConfig {
   account?: Account | Address;
 }
 
-export const createClient = (config: ClientConfig = {chain: localnet}) => {
-  const chainConfig = config.chain || localnet;
-  if (config.endpoint) {
-    chainConfig.rpcUrls.default.http = [config.endpoint];
-  }
+const getCustomTransport = (config: ClientConfig) => {
   const isAddress = typeof config.account !== "object";
 
-  const customTransport = {
+  return {
     async request({method, params = []}: {method: string; params: any[]}) {
       if (method.startsWith("eth_") && isAddress) {
         try {
@@ -37,8 +33,12 @@ export const createClient = (config: ClientConfig = {chain: localnet}) => {
           throw err;
         }
       } else {
+        if (!config.chain) {
+          throw new Error("Chain is not set");
+        }
+
         try {
-          const response = await fetch(chainConfig.rpcUrls.default.http[0], {
+          const response = await fetch(config.chain.rpcUrls.default.http[0], {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -65,6 +65,15 @@ export const createClient = (config: ClientConfig = {chain: localnet}) => {
       }
     },
   };
+};
+
+export const createClient = (config: ClientConfig = {chain: localnet}): GenLayerClient<GenLayerChain> => {
+  const chainConfig = config.chain || localnet;
+  if (config.endpoint) {
+    chainConfig.rpcUrls.default.http = [config.endpoint];
+  }
+
+  const customTransport = getCustomTransport(config);
 
   const baseClient = createViemClient({
     chain: chainConfig,
@@ -73,11 +82,11 @@ export const createClient = (config: ClientConfig = {chain: localnet}) => {
   })
     .extend(publicActions)
     .extend(walletActions)
-    .extend(client => accountActions(client as unknown as GenLayerClient<SimulatorChain>))
-    .extend(client => transactionActions(client as unknown as GenLayerClient<SimulatorChain>))
-    .extend(client => contractActions(client as unknown as GenLayerClient<SimulatorChain>))
-    .extend(client => chainActions(client as unknown as GenLayerClient<SimulatorChain>))
-    .extend(client => genlayerWalletActions(client as unknown as GenLayerClient<SimulatorChain>));
+    .extend(client => accountActions(client as unknown as GenLayerClient<GenLayerChain>))
+    .extend(client => transactionActions(client as unknown as GenLayerClient<GenLayerChain>))
+    .extend(client => contractActions(client as unknown as GenLayerClient<GenLayerChain>))
+    .extend(client => chainActions(client as unknown as GenLayerClient<GenLayerChain>))
+    .extend(client => genlayerWalletActions(client as unknown as GenLayerClient<GenLayerChain>));
 
   // Initialize in the background
   baseClient.initializeConsensusSmartContract().catch(error => {

@@ -2,10 +2,10 @@ import {GenLayerClient} from "../types/clients";
 import {TransactionHash, TransactionStatus, GenLayerTransaction} from "../types/transactions";
 import {transactionsConfig} from "../config/transactions";
 import {sleep} from "../utils/async";
-import {SimulatorChain} from "@/types";
+import {GenLayerChain} from "@/types";
 import {b64ToArray, calldataToUserFriendlyJson, resultToUserFriendlyJson} from "@/utils/jsonifier";
 
-export const transactionActions = (client: GenLayerClient<SimulatorChain>) => ({
+export const transactionActions = (client: GenLayerClient<GenLayerChain>) => ({
   waitForTransactionReceipt: async ({
     hash,
     status = TransactionStatus.ACCEPTED,
@@ -66,7 +66,7 @@ const _decodeTransaction = (tx: GenLayerTransaction): GenLayerTransaction => {
           Object.entries(leaderReceipt.eq_outputs).map(([key, value]) => {
             const decodedValue = new TextDecoder().decode(b64ToArray(String(value)));
             return [key, resultToUserFriendlyJson(decodedValue)];
-          })
+          }),
         );
       }
     }
@@ -82,4 +82,4 @@ const _decodeTransaction = (tx: GenLayerTransaction): GenLayerTransaction => {
   }
 
   return tx;
-}
+};

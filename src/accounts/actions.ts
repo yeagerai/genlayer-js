@@ -1,7 +1,7 @@
-import {GenLayerClient, TransactionHash, SimulatorChain} from "../types";
+import {GenLayerClient, TransactionHash, GenLayerChain} from "../types";
 import {localnet} from "../chains";
 
-export function accountActions(client: GenLayerClient<SimulatorChain>) {
+export function accountActions(client: GenLayerClient<GenLayerChain>) {
   return {
     fundAccount: async ({address, amount}: {address: string; amount: number}): Promise<TransactionHash> => {
       if (client.chain?.id !== localnet.id) {

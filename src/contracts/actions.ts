@@ -3,7 +3,7 @@ import {serialize, serializeOne} from "@/abi/transactions";
 import {
   Account,
   ContractSchema,
-  SimulatorChain,
+  GenLayerChain,
   GenLayerClient,
   CalldataEncodable,
   Address,
@@ -48,7 +48,7 @@ function makeCalldataObject(
   return ret;
 }
 
-export const contractActions = (client: GenLayerClient<SimulatorChain>) => {
+export const contractActions = (client: GenLayerClient<GenLayerChain>) => {
   return {
     getContractSchema: async (address: string): Promise<ContractSchema> => {
       const schema = (await client.request({
@@ -67,7 +67,7 @@ export const contractActions = (client: GenLayerClient<SimulatorChain>) => {
   };
 };
 
-export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) => {
+export const overrideContractActions = (client: GenLayerClient<GenLayerChain>) => {
   client.readContract = async <RawReturn extends boolean | undefined>(args: {
     account?: Account;
     address: Address;
