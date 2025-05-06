@@ -1,11 +1,11 @@
 import {GenLayerClient, SimulatorChain} from "@/types";
-import {simulator} from "@/chains";
+import {testnet} from "./testnet";
 
 export function chainActions(client: GenLayerClient<SimulatorChain>) {
   return {
     initializeConsensusSmartContract: async (forceReset: boolean = false): Promise<void> => {
-      if (client.chain?.id !== simulator.id) {
-        throw new Error("Client is not connected to the simulator");
+      if (client.chain?.id !== testnet.id) {
+        return;
       }
 
       if (
