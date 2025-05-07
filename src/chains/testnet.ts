@@ -1436,6 +1436,2558 @@ const CONSENSUS_MAIN_CONTRACT = {
   bytecode: "",
 };
 
+const CONSENSUS_DATA_CONTRACT = {
+  address: "0x88B0F18613Db92Bf970FfE264E02496e20a74D16",
+  abi: [
+    {
+      inputs: [],
+      name: "AccessControlBadConfirmation",
+      type: "error",
+    },
+    {
+      inputs: [
+        {
+          internalType: "address",
+          name: "account",
+          type: "address",
+        },
+        {
+          internalType: "bytes32",
+          name: "neededRole",
+          type: "bytes32",
+        },
+      ],
+      name: "AccessControlUnauthorizedAccount",
+      type: "error",
+    },
+    {
+      inputs: [],
+      name: "InvalidInitialization",
+      type: "error",
+    },
+    {
+      inputs: [],
+      name: "NotInitializing",
+      type: "error",
+    },
+    {
+      inputs: [
+        {
+          internalType: "address",
+          name: "owner",
+          type: "address",
+        },
+      ],
+      name: "OwnableInvalidOwner",
+      type: "error",
+    },
+    {
+      inputs: [
+        {
+          internalType: "address",
+          name: "account",
+          type: "address",
+        },
+      ],
+      name: "OwnableUnauthorizedAccount",
+      type: "error",
+    },
+    {
+      inputs: [],
+      name: "ReentrancyGuardReentrantCall",
+      type: "error",
+    },
+    {
+      anonymous: false,
+      inputs: [
+        {
+          indexed: false,
+          internalType: "uint64",
+          name: "version",
+          type: "uint64",
+        },
+      ],
+      name: "Initialized",
+      type: "event",
+    },
+    {
+      anonymous: false,
+      inputs: [
+        {
+          indexed: true,
+          internalType: "address",
+          name: "previousOwner",
+          type: "address",
+        },
+        {
+          indexed: true,
+          internalType: "address",
+          name: "newOwner",
+          type: "address",
+        },
+      ],
+      name: "OwnershipTransferStarted",
+      type: "event",
+    },
+    {
+      anonymous: false,
+      inputs: [
+        {
+          indexed: true,
+          internalType: "address",
+          name: "previousOwner",
+          type: "address",
+        },
+        {
+          indexed: true,
+          internalType: "address",
+          name: "newOwner",
+          type: "address",
+        },
+      ],
+      name: "OwnershipTransferred",
+      type: "event",
+    },
+    {
+      anonymous: false,
+      inputs: [
+        {
+          indexed: true,
+          internalType: "bytes32",
+          name: "role",
+          type: "bytes32",
+        },
+        {
+          indexed: true,
+          internalType: "bytes32",
+          name: "previousAdminRole",
+          type: "bytes32",
+        },
+        {
+          indexed: true,
+          internalType: "bytes32",
+          name: "newAdminRole",
+          type: "bytes32",
+        },
+      ],
+      name: "RoleAdminChanged",
+      type: "event",
+    },
+    {
+      anonymous: false,
+      inputs: [
+        {
+          indexed: true,
+          internalType: "bytes32",
+          name: "role",
+          type: "bytes32",
+        },
+        {
+          indexed: true,
+          internalType: "address",
+          name: "account",
+          type: "address",
+        },
+        {
+          indexed: true,
+          internalType: "address",
+          name: "sender",
+          type: "address",
+        },
+      ],
+      name: "RoleGranted",
+      type: "event",
+    },
+    {
+      anonymous: false,
+      inputs: [
+        {
+          indexed: true,
+          internalType: "bytes32",
+          name: "role",
+          type: "bytes32",
+        },
+        {
+          indexed: true,
+          internalType: "address",
+          name: "account",
+          type: "address",
+        },
+        {
+          indexed: true,
+          internalType: "address",
+          name: "sender",
+          type: "address",
+        },
+      ],
+      name: "RoleRevoked",
+      type: "event",
+    },
+    {
+      inputs: [],
+      name: "DEFAULT_ADMIN_ROLE",
+      outputs: [
+        {
+          internalType: "bytes32",
+          name: "",
+          type: "bytes32",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [],
+      name: "acceptOwnership",
+      outputs: [],
+      stateMutability: "nonpayable",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "bytes32",
+          name: "_txId",
+          type: "bytes32",
+        },
+        {
+          internalType: "uint256",
+          name: "_currentTimestamp",
+          type: "uint256",
+        },
+      ],
+      name: "canFinalize",
+      outputs: [
+        {
+          internalType: "bool",
+          name: "",
+          type: "bool",
+        },
+        {
+          internalType: "uint256",
+          name: "",
+          type: "uint256",
+        },
+        {
+          internalType: "uint256",
+          name: "",
+          type: "uint256",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [],
+      name: "consensusMain",
+      outputs: [
+        {
+          internalType: "contract IConsensusMain",
+          name: "",
+          type: "address",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "bytes32",
+          name: "_tx_id",
+          type: "bytes32",
+        },
+      ],
+      name: "getLastAppealResult",
+      outputs: [
+        {
+          internalType: "enum ITransactions.ResultType",
+          name: "",
+          type: "uint8",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "address",
+          name: "recipient",
+          type: "address",
+        },
+      ],
+      name: "getLatestAcceptedTransaction",
+      outputs: [
+        {
+          components: [
+            {
+              internalType: "uint256",
+              name: "currentTimestamp",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "sender",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "recipient",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "numOfInitialValidators",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "txSlot",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "createdTimestamp",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "lastVoteTimestamp",
+              type: "uint256",
+            },
+            {
+              internalType: "bytes32",
+              name: "randomSeed",
+              type: "bytes32",
+            },
+            {
+              internalType: "enum ITransactions.ResultType",
+              name: "result",
+              type: "uint8",
+            },
+            {
+              internalType: "bytes",
+              name: "txData",
+              type: "bytes",
+            },
+            {
+              internalType: "bytes",
+              name: "txReceipt",
+              type: "bytes",
+            },
+            {
+              components: [
+                {
+                  internalType: "enum IMessages.MessageType",
+                  name: "messageType",
+                  type: "uint8",
+                },
+                {
+                  internalType: "address",
+                  name: "recipient",
+                  type: "address",
+                },
+                {
+                  internalType: "uint256",
+                  name: "value",
+                  type: "uint256",
+                },
+                {
+                  internalType: "bytes",
+                  name: "data",
+                  type: "bytes",
+                },
+                {
+                  internalType: "bool",
+                  name: "onAcceptance",
+                  type: "bool",
+                },
+              ],
+              internalType: "struct IMessages.SubmittedMessage[]",
+              name: "messages",
+              type: "tuple[]",
+            },
+            {
+              internalType: "enum IQueues.QueueType",
+              name: "queueType",
+              type: "uint8",
+            },
+            {
+              internalType: "uint256",
+              name: "queuePosition",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "activator",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "lastLeader",
+              type: "address",
+            },
+            {
+              internalType: "enum ITransactions.TransactionStatus",
+              name: "status",
+              type: "uint8",
+            },
+            {
+              internalType: "bytes32",
+              name: "txId",
+              type: "bytes32",
+            },
+            {
+              components: [
+                {
+                  internalType: "uint256",
+                  name: "activationBlock",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "processingBlock",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "proposalBlock",
+                  type: "uint256",
+                },
+              ],
+              internalType: "struct ITransactions.ReadStateBlockRange",
+              name: "readStateBlockRange",
+              type: "tuple",
+            },
+            {
+              internalType: "uint256",
+              name: "numOfRounds",
+              type: "uint256",
+            },
+            {
+              components: [
+                {
+                  internalType: "uint256",
+                  name: "round",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "leaderIndex",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "votesCommitted",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "votesRevealed",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "appealBond",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "rotationsLeft",
+                  type: "uint256",
+                },
+                {
+                  internalType: "enum ITransactions.ResultType",
+                  name: "result",
+                  type: "uint8",
+                },
+                {
+                  internalType: "address[]",
+                  name: "roundValidators",
+                  type: "address[]",
+                },
+                {
+                  internalType: "bytes32[]",
+                  name: "validatorVotesHash",
+                  type: "bytes32[]",
+                },
+                {
+                  internalType: "enum ITransactions.VoteType[]",
+                  name: "validatorVotes",
+                  type: "uint8[]",
+                },
+              ],
+              internalType: "struct ITransactions.RoundData",
+              name: "lastRound",
+              type: "tuple",
+            },
+          ],
+          internalType: "struct ConsensusData.TransactionData",
+          name: "txData",
+          type: "tuple",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "address",
+          name: "recipient",
+          type: "address",
+        },
+        {
+          internalType: "uint256",
+          name: "startIndex",
+          type: "uint256",
+        },
+        {
+          internalType: "uint256",
+          name: "pageSize",
+          type: "uint256",
+        },
+      ],
+      name: "getLatestAcceptedTransactions",
+      outputs: [
+        {
+          components: [
+            {
+              internalType: "uint256",
+              name: "currentTimestamp",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "sender",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "recipient",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "numOfInitialValidators",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "txSlot",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "createdTimestamp",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "lastVoteTimestamp",
+              type: "uint256",
+            },
+            {
+              internalType: "bytes32",
+              name: "randomSeed",
+              type: "bytes32",
+            },
+            {
+              internalType: "enum ITransactions.ResultType",
+              name: "result",
+              type: "uint8",
+            },
+            {
+              internalType: "bytes",
+              name: "txData",
+              type: "bytes",
+            },
+            {
+              internalType: "bytes",
+              name: "txReceipt",
+              type: "bytes",
+            },
+            {
+              components: [
+                {
+                  internalType: "enum IMessages.MessageType",
+                  name: "messageType",
+                  type: "uint8",
+                },
+                {
+                  internalType: "address",
+                  name: "recipient",
+                  type: "address",
+                },
+                {
+                  internalType: "uint256",
+                  name: "value",
+                  type: "uint256",
+                },
+                {
+                  internalType: "bytes",
+                  name: "data",
+                  type: "bytes",
+                },
+                {
+                  internalType: "bool",
+                  name: "onAcceptance",
+                  type: "bool",
+                },
+              ],
+              internalType: "struct IMessages.SubmittedMessage[]",
+              name: "messages",
+              type: "tuple[]",
+            },
+            {
+              internalType: "enum IQueues.QueueType",
+              name: "queueType",
+              type: "uint8",
+            },
+            {
+              internalType: "uint256",
+              name: "queuePosition",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "activator",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "lastLeader",
+              type: "address",
+            },
+            {
+              internalType: "enum ITransactions.TransactionStatus",
+              name: "status",
+              type: "uint8",
+            },
+            {
+              internalType: "bytes32",
+              name: "txId",
+              type: "bytes32",
+            },
+            {
+              components: [
+                {
+                  internalType: "uint256",
+                  name: "activationBlock",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "processingBlock",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "proposalBlock",
+                  type: "uint256",
+                },
+              ],
+              internalType: "struct ITransactions.ReadStateBlockRange",
+              name: "readStateBlockRange",
+              type: "tuple",
+            },
+            {
+              internalType: "uint256",
+              name: "numOfRounds",
+              type: "uint256",
+            },
+            {
+              components: [
+                {
+                  internalType: "uint256",
+                  name: "round",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "leaderIndex",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "votesCommitted",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "votesRevealed",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "appealBond",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "rotationsLeft",
+                  type: "uint256",
+                },
+                {
+                  internalType: "enum ITransactions.ResultType",
+                  name: "result",
+                  type: "uint8",
+                },
+                {
+                  internalType: "address[]",
+                  name: "roundValidators",
+                  type: "address[]",
+                },
+                {
+                  internalType: "bytes32[]",
+                  name: "validatorVotesHash",
+                  type: "bytes32[]",
+                },
+                {
+                  internalType: "enum ITransactions.VoteType[]",
+                  name: "validatorVotes",
+                  type: "uint8[]",
+                },
+              ],
+              internalType: "struct ITransactions.RoundData",
+              name: "lastRound",
+              type: "tuple",
+            },
+          ],
+          internalType: "struct ConsensusData.TransactionData[]",
+          name: "",
+          type: "tuple[]",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "address",
+          name: "recipient",
+          type: "address",
+        },
+      ],
+      name: "getLatestAcceptedTxCount",
+      outputs: [
+        {
+          internalType: "uint256",
+          name: "",
+          type: "uint256",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "address",
+          name: "recipient",
+          type: "address",
+        },
+      ],
+      name: "getLatestFinalizedTransaction",
+      outputs: [
+        {
+          components: [
+            {
+              internalType: "uint256",
+              name: "currentTimestamp",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "sender",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "recipient",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "numOfInitialValidators",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "txSlot",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "createdTimestamp",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "lastVoteTimestamp",
+              type: "uint256",
+            },
+            {
+              internalType: "bytes32",
+              name: "randomSeed",
+              type: "bytes32",
+            },
+            {
+              internalType: "enum ITransactions.ResultType",
+              name: "result",
+              type: "uint8",
+            },
+            {
+              internalType: "bytes",
+              name: "txData",
+              type: "bytes",
+            },
+            {
+              internalType: "bytes",
+              name: "txReceipt",
+              type: "bytes",
+            },
+            {
+              components: [
+                {
+                  internalType: "enum IMessages.MessageType",
+                  name: "messageType",
+                  type: "uint8",
+                },
+                {
+                  internalType: "address",
+                  name: "recipient",
+                  type: "address",
+                },
+                {
+                  internalType: "uint256",
+                  name: "value",
+                  type: "uint256",
+                },
+                {
+                  internalType: "bytes",
+                  name: "data",
+                  type: "bytes",
+                },
+                {
+                  internalType: "bool",
+                  name: "onAcceptance",
+                  type: "bool",
+                },
+              ],
+              internalType: "struct IMessages.SubmittedMessage[]",
+              name: "messages",
+              type: "tuple[]",
+            },
+            {
+              internalType: "enum IQueues.QueueType",
+              name: "queueType",
+              type: "uint8",
+            },
+            {
+              internalType: "uint256",
+              name: "queuePosition",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "activator",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "lastLeader",
+              type: "address",
+            },
+            {
+              internalType: "enum ITransactions.TransactionStatus",
+              name: "status",
+              type: "uint8",
+            },
+            {
+              internalType: "bytes32",
+              name: "txId",
+              type: "bytes32",
+            },
+            {
+              components: [
+                {
+                  internalType: "uint256",
+                  name: "activationBlock",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "processingBlock",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "proposalBlock",
+                  type: "uint256",
+                },
+              ],
+              internalType: "struct ITransactions.ReadStateBlockRange",
+              name: "readStateBlockRange",
+              type: "tuple",
+            },
+            {
+              internalType: "uint256",
+              name: "numOfRounds",
+              type: "uint256",
+            },
+            {
+              components: [
+                {
+                  internalType: "uint256",
+                  name: "round",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "leaderIndex",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "votesCommitted",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "votesRevealed",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "appealBond",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "rotationsLeft",
+                  type: "uint256",
+                },
+                {
+                  internalType: "enum ITransactions.ResultType",
+                  name: "result",
+                  type: "uint8",
+                },
+                {
+                  internalType: "address[]",
+                  name: "roundValidators",
+                  type: "address[]",
+                },
+                {
+                  internalType: "bytes32[]",
+                  name: "validatorVotesHash",
+                  type: "bytes32[]",
+                },
+                {
+                  internalType: "enum ITransactions.VoteType[]",
+                  name: "validatorVotes",
+                  type: "uint8[]",
+                },
+              ],
+              internalType: "struct ITransactions.RoundData",
+              name: "lastRound",
+              type: "tuple",
+            },
+          ],
+          internalType: "struct ConsensusData.TransactionData",
+          name: "txData",
+          type: "tuple",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "address",
+          name: "recipient",
+          type: "address",
+        },
+        {
+          internalType: "uint256",
+          name: "startIndex",
+          type: "uint256",
+        },
+        {
+          internalType: "uint256",
+          name: "pageSize",
+          type: "uint256",
+        },
+      ],
+      name: "getLatestFinalizedTransactions",
+      outputs: [
+        {
+          components: [
+            {
+              internalType: "uint256",
+              name: "currentTimestamp",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "sender",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "recipient",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "numOfInitialValidators",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "txSlot",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "createdTimestamp",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "lastVoteTimestamp",
+              type: "uint256",
+            },
+            {
+              internalType: "bytes32",
+              name: "randomSeed",
+              type: "bytes32",
+            },
+            {
+              internalType: "enum ITransactions.ResultType",
+              name: "result",
+              type: "uint8",
+            },
+            {
+              internalType: "bytes",
+              name: "txData",
+              type: "bytes",
+            },
+            {
+              internalType: "bytes",
+              name: "txReceipt",
+              type: "bytes",
+            },
+            {
+              components: [
+                {
+                  internalType: "enum IMessages.MessageType",
+                  name: "messageType",
+                  type: "uint8",
+                },
+                {
+                  internalType: "address",
+                  name: "recipient",
+                  type: "address",
+                },
+                {
+                  internalType: "uint256",
+                  name: "value",
+                  type: "uint256",
+                },
+                {
+                  internalType: "bytes",
+                  name: "data",
+                  type: "bytes",
+                },
+                {
+                  internalType: "bool",
+                  name: "onAcceptance",
+                  type: "bool",
+                },
+              ],
+              internalType: "struct IMessages.SubmittedMessage[]",
+              name: "messages",
+              type: "tuple[]",
+            },
+            {
+              internalType: "enum IQueues.QueueType",
+              name: "queueType",
+              type: "uint8",
+            },
+            {
+              internalType: "uint256",
+              name: "queuePosition",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "activator",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "lastLeader",
+              type: "address",
+            },
+            {
+              internalType: "enum ITransactions.TransactionStatus",
+              name: "status",
+              type: "uint8",
+            },
+            {
+              internalType: "bytes32",
+              name: "txId",
+              type: "bytes32",
+            },
+            {
+              components: [
+                {
+                  internalType: "uint256",
+                  name: "activationBlock",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "processingBlock",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "proposalBlock",
+                  type: "uint256",
+                },
+              ],
+              internalType: "struct ITransactions.ReadStateBlockRange",
+              name: "readStateBlockRange",
+              type: "tuple",
+            },
+            {
+              internalType: "uint256",
+              name: "numOfRounds",
+              type: "uint256",
+            },
+            {
+              components: [
+                {
+                  internalType: "uint256",
+                  name: "round",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "leaderIndex",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "votesCommitted",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "votesRevealed",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "appealBond",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "rotationsLeft",
+                  type: "uint256",
+                },
+                {
+                  internalType: "enum ITransactions.ResultType",
+                  name: "result",
+                  type: "uint8",
+                },
+                {
+                  internalType: "address[]",
+                  name: "roundValidators",
+                  type: "address[]",
+                },
+                {
+                  internalType: "bytes32[]",
+                  name: "validatorVotesHash",
+                  type: "bytes32[]",
+                },
+                {
+                  internalType: "enum ITransactions.VoteType[]",
+                  name: "validatorVotes",
+                  type: "uint8[]",
+                },
+              ],
+              internalType: "struct ITransactions.RoundData",
+              name: "lastRound",
+              type: "tuple",
+            },
+          ],
+          internalType: "struct ConsensusData.TransactionData[]",
+          name: "",
+          type: "tuple[]",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "address",
+          name: "recipient",
+          type: "address",
+        },
+      ],
+      name: "getLatestFinalizedTxCount",
+      outputs: [
+        {
+          internalType: "uint256",
+          name: "",
+          type: "uint256",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "address",
+          name: "recipient",
+          type: "address",
+        },
+      ],
+      name: "getLatestPendingTxCount",
+      outputs: [
+        {
+          internalType: "uint256",
+          name: "",
+          type: "uint256",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "address",
+          name: "recipient",
+          type: "address",
+        },
+        {
+          internalType: "uint256",
+          name: "slot",
+          type: "uint256",
+        },
+      ],
+      name: "getLatestPendingTxId",
+      outputs: [
+        {
+          internalType: "bytes32",
+          name: "",
+          type: "bytes32",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "address",
+          name: "recipient",
+          type: "address",
+        },
+      ],
+      name: "getLatestUndeterminedTransaction",
+      outputs: [
+        {
+          components: [
+            {
+              internalType: "uint256",
+              name: "currentTimestamp",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "sender",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "recipient",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "numOfInitialValidators",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "txSlot",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "createdTimestamp",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "lastVoteTimestamp",
+              type: "uint256",
+            },
+            {
+              internalType: "bytes32",
+              name: "randomSeed",
+              type: "bytes32",
+            },
+            {
+              internalType: "enum ITransactions.ResultType",
+              name: "result",
+              type: "uint8",
+            },
+            {
+              internalType: "bytes",
+              name: "txData",
+              type: "bytes",
+            },
+            {
+              internalType: "bytes",
+              name: "txReceipt",
+              type: "bytes",
+            },
+            {
+              components: [
+                {
+                  internalType: "enum IMessages.MessageType",
+                  name: "messageType",
+                  type: "uint8",
+                },
+                {
+                  internalType: "address",
+                  name: "recipient",
+                  type: "address",
+                },
+                {
+                  internalType: "uint256",
+                  name: "value",
+                  type: "uint256",
+                },
+                {
+                  internalType: "bytes",
+                  name: "data",
+                  type: "bytes",
+                },
+                {
+                  internalType: "bool",
+                  name: "onAcceptance",
+                  type: "bool",
+                },
+              ],
+              internalType: "struct IMessages.SubmittedMessage[]",
+              name: "messages",
+              type: "tuple[]",
+            },
+            {
+              internalType: "enum IQueues.QueueType",
+              name: "queueType",
+              type: "uint8",
+            },
+            {
+              internalType: "uint256",
+              name: "queuePosition",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "activator",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "lastLeader",
+              type: "address",
+            },
+            {
+              internalType: "enum ITransactions.TransactionStatus",
+              name: "status",
+              type: "uint8",
+            },
+            {
+              internalType: "bytes32",
+              name: "txId",
+              type: "bytes32",
+            },
+            {
+              components: [
+                {
+                  internalType: "uint256",
+                  name: "activationBlock",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "processingBlock",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "proposalBlock",
+                  type: "uint256",
+                },
+              ],
+              internalType: "struct ITransactions.ReadStateBlockRange",
+              name: "readStateBlockRange",
+              type: "tuple",
+            },
+            {
+              internalType: "uint256",
+              name: "numOfRounds",
+              type: "uint256",
+            },
+            {
+              components: [
+                {
+                  internalType: "uint256",
+                  name: "round",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "leaderIndex",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "votesCommitted",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "votesRevealed",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "appealBond",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "rotationsLeft",
+                  type: "uint256",
+                },
+                {
+                  internalType: "enum ITransactions.ResultType",
+                  name: "result",
+                  type: "uint8",
+                },
+                {
+                  internalType: "address[]",
+                  name: "roundValidators",
+                  type: "address[]",
+                },
+                {
+                  internalType: "bytes32[]",
+                  name: "validatorVotesHash",
+                  type: "bytes32[]",
+                },
+                {
+                  internalType: "enum ITransactions.VoteType[]",
+                  name: "validatorVotes",
+                  type: "uint8[]",
+                },
+              ],
+              internalType: "struct ITransactions.RoundData",
+              name: "lastRound",
+              type: "tuple",
+            },
+          ],
+          internalType: "struct ConsensusData.TransactionData",
+          name: "txData",
+          type: "tuple",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "address",
+          name: "recipient",
+          type: "address",
+        },
+      ],
+      name: "getLatestUndeterminedTxCount",
+      outputs: [
+        {
+          internalType: "uint256",
+          name: "",
+          type: "uint256",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "bytes32",
+          name: "_tx_id",
+          type: "bytes32",
+        },
+      ],
+      name: "getMessagesForTransaction",
+      outputs: [
+        {
+          components: [
+            {
+              internalType: "enum IMessages.MessageType",
+              name: "messageType",
+              type: "uint8",
+            },
+            {
+              internalType: "address",
+              name: "recipient",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "value",
+              type: "uint256",
+            },
+            {
+              internalType: "bytes",
+              name: "data",
+              type: "bytes",
+            },
+            {
+              internalType: "bool",
+              name: "onAcceptance",
+              type: "bool",
+            },
+          ],
+          internalType: "struct IMessages.SubmittedMessage[]",
+          name: "",
+          type: "tuple[]",
+        },
+        {
+          internalType: "address",
+          name: "ghostAddress",
+          type: "address",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "bytes32",
+          name: "_tx_id",
+          type: "bytes32",
+        },
+      ],
+      name: "getReadStateBlockRangeForTransaction",
+      outputs: [
+        {
+          internalType: "uint256",
+          name: "activationBlock",
+          type: "uint256",
+        },
+        {
+          internalType: "uint256",
+          name: "processingBlock",
+          type: "uint256",
+        },
+        {
+          internalType: "uint256",
+          name: "proposalBlock",
+          type: "uint256",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "address",
+          name: "recipient",
+          type: "address",
+        },
+        {
+          internalType: "uint256",
+          name: "startIndex",
+          type: "uint256",
+        },
+        {
+          internalType: "uint256",
+          name: "endIndex",
+          type: "uint256",
+        },
+      ],
+      name: "getRecipientQueues",
+      outputs: [
+        {
+          components: [
+            {
+              components: [
+                {
+                  internalType: "uint256",
+                  name: "head",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "tail",
+                  type: "uint256",
+                },
+                {
+                  internalType: "bytes32[]",
+                  name: "txIds",
+                  type: "bytes32[]",
+                },
+              ],
+              internalType: "struct IQueues.QueueInfoView",
+              name: "pending",
+              type: "tuple",
+            },
+            {
+              components: [
+                {
+                  internalType: "uint256",
+                  name: "head",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "tail",
+                  type: "uint256",
+                },
+                {
+                  internalType: "bytes32[]",
+                  name: "txIds",
+                  type: "bytes32[]",
+                },
+              ],
+              internalType: "struct IQueues.QueueInfoView",
+              name: "accepted",
+              type: "tuple",
+            },
+            {
+              components: [
+                {
+                  internalType: "uint256",
+                  name: "head",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "tail",
+                  type: "uint256",
+                },
+                {
+                  internalType: "bytes32[]",
+                  name: "txIds",
+                  type: "bytes32[]",
+                },
+              ],
+              internalType: "struct IQueues.QueueInfoView",
+              name: "undetermined",
+              type: "tuple",
+            },
+            {
+              internalType: "uint256",
+              name: "finalizedCount",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "issuedTxCount",
+              type: "uint256",
+            },
+          ],
+          internalType: "struct IQueues.RecipientQueuesView",
+          name: "",
+          type: "tuple",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "bytes32",
+          name: "role",
+          type: "bytes32",
+        },
+      ],
+      name: "getRoleAdmin",
+      outputs: [
+        {
+          internalType: "bytes32",
+          name: "",
+          type: "bytes32",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [],
+      name: "getTotalNumOfTransactions",
+      outputs: [
+        {
+          internalType: "uint256",
+          name: "",
+          type: "uint256",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "bytes32",
+          name: "_tx_id",
+          type: "bytes32",
+        },
+      ],
+      name: "getTransactionAllData",
+      outputs: [
+        {
+          components: [
+            {
+              internalType: "bytes32",
+              name: "id",
+              type: "bytes32",
+            },
+            {
+              internalType: "address",
+              name: "sender",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "recipient",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "numOfInitialValidators",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "txSlot",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "activator",
+              type: "address",
+            },
+            {
+              internalType: "enum ITransactions.TransactionStatus",
+              name: "status",
+              type: "uint8",
+            },
+            {
+              internalType: "enum ITransactions.TransactionStatus",
+              name: "previousStatus",
+              type: "uint8",
+            },
+            {
+              components: [
+                {
+                  internalType: "uint256",
+                  name: "created",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "pending",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "activated",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "proposed",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "committed",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "lastVote",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "appealSubmitted",
+                  type: "uint256",
+                },
+              ],
+              internalType: "struct ITransactions.Timestamps",
+              name: "timestamps",
+              type: "tuple",
+            },
+            {
+              internalType: "bytes32",
+              name: "randomSeed",
+              type: "bytes32",
+            },
+            {
+              internalType: "bool",
+              name: "onAcceptanceMessages",
+              type: "bool",
+            },
+            {
+              internalType: "enum ITransactions.ResultType",
+              name: "result",
+              type: "uint8",
+            },
+            {
+              components: [
+                {
+                  internalType: "uint256",
+                  name: "activationBlock",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "processingBlock",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "proposalBlock",
+                  type: "uint256",
+                },
+              ],
+              internalType: "struct ITransactions.ReadStateBlockRange",
+              name: "readStateBlockRange",
+              type: "tuple",
+            },
+            {
+              internalType: "bytes",
+              name: "txData",
+              type: "bytes",
+            },
+            {
+              internalType: "bytes",
+              name: "txReceipt",
+              type: "bytes",
+            },
+            {
+              components: [
+                {
+                  internalType: "enum IMessages.MessageType",
+                  name: "messageType",
+                  type: "uint8",
+                },
+                {
+                  internalType: "address",
+                  name: "recipient",
+                  type: "address",
+                },
+                {
+                  internalType: "uint256",
+                  name: "value",
+                  type: "uint256",
+                },
+                {
+                  internalType: "bytes",
+                  name: "data",
+                  type: "bytes",
+                },
+                {
+                  internalType: "bool",
+                  name: "onAcceptance",
+                  type: "bool",
+                },
+              ],
+              internalType: "struct IMessages.SubmittedMessage[]",
+              name: "messages",
+              type: "tuple[]",
+            },
+            {
+              internalType: "address[]",
+              name: "consumedValidators",
+              type: "address[]",
+            },
+            {
+              components: [
+                {
+                  internalType: "uint256",
+                  name: "round",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "leaderIndex",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "votesCommitted",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "votesRevealed",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "appealBond",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "rotationsLeft",
+                  type: "uint256",
+                },
+                {
+                  internalType: "enum ITransactions.ResultType",
+                  name: "result",
+                  type: "uint8",
+                },
+                {
+                  internalType: "address[]",
+                  name: "roundValidators",
+                  type: "address[]",
+                },
+                {
+                  internalType: "bytes32[]",
+                  name: "validatorVotesHash",
+                  type: "bytes32[]",
+                },
+                {
+                  internalType: "enum ITransactions.VoteType[]",
+                  name: "validatorVotes",
+                  type: "uint8[]",
+                },
+              ],
+              internalType: "struct ITransactions.RoundData[]",
+              name: "roundData",
+              type: "tuple[]",
+            },
+          ],
+          internalType: "struct ITransactions.Transaction",
+          name: "transaction",
+          type: "tuple",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "bytes32",
+          name: "_tx_id",
+          type: "bytes32",
+        },
+        {
+          internalType: "uint256",
+          name: "_timestamp",
+          type: "uint256",
+        },
+      ],
+      name: "getTransactionData",
+      outputs: [
+        {
+          components: [
+            {
+              internalType: "uint256",
+              name: "currentTimestamp",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "sender",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "recipient",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "numOfInitialValidators",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "txSlot",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "createdTimestamp",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "lastVoteTimestamp",
+              type: "uint256",
+            },
+            {
+              internalType: "bytes32",
+              name: "randomSeed",
+              type: "bytes32",
+            },
+            {
+              internalType: "enum ITransactions.ResultType",
+              name: "result",
+              type: "uint8",
+            },
+            {
+              internalType: "bytes",
+              name: "txData",
+              type: "bytes",
+            },
+            {
+              internalType: "bytes",
+              name: "txReceipt",
+              type: "bytes",
+            },
+            {
+              components: [
+                {
+                  internalType: "enum IMessages.MessageType",
+                  name: "messageType",
+                  type: "uint8",
+                },
+                {
+                  internalType: "address",
+                  name: "recipient",
+                  type: "address",
+                },
+                {
+                  internalType: "uint256",
+                  name: "value",
+                  type: "uint256",
+                },
+                {
+                  internalType: "bytes",
+                  name: "data",
+                  type: "bytes",
+                },
+                {
+                  internalType: "bool",
+                  name: "onAcceptance",
+                  type: "bool",
+                },
+              ],
+              internalType: "struct IMessages.SubmittedMessage[]",
+              name: "messages",
+              type: "tuple[]",
+            },
+            {
+              internalType: "enum IQueues.QueueType",
+              name: "queueType",
+              type: "uint8",
+            },
+            {
+              internalType: "uint256",
+              name: "queuePosition",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "activator",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "lastLeader",
+              type: "address",
+            },
+            {
+              internalType: "enum ITransactions.TransactionStatus",
+              name: "status",
+              type: "uint8",
+            },
+            {
+              internalType: "bytes32",
+              name: "txId",
+              type: "bytes32",
+            },
+            {
+              components: [
+                {
+                  internalType: "uint256",
+                  name: "activationBlock",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "processingBlock",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "proposalBlock",
+                  type: "uint256",
+                },
+              ],
+              internalType: "struct ITransactions.ReadStateBlockRange",
+              name: "readStateBlockRange",
+              type: "tuple",
+            },
+            {
+              internalType: "uint256",
+              name: "numOfRounds",
+              type: "uint256",
+            },
+            {
+              components: [
+                {
+                  internalType: "uint256",
+                  name: "round",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "leaderIndex",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "votesCommitted",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "votesRevealed",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "appealBond",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "rotationsLeft",
+                  type: "uint256",
+                },
+                {
+                  internalType: "enum ITransactions.ResultType",
+                  name: "result",
+                  type: "uint8",
+                },
+                {
+                  internalType: "address[]",
+                  name: "roundValidators",
+                  type: "address[]",
+                },
+                {
+                  internalType: "bytes32[]",
+                  name: "validatorVotesHash",
+                  type: "bytes32[]",
+                },
+                {
+                  internalType: "enum ITransactions.VoteType[]",
+                  name: "validatorVotes",
+                  type: "uint8[]",
+                },
+              ],
+              internalType: "struct ITransactions.RoundData",
+              name: "lastRound",
+              type: "tuple",
+            },
+          ],
+          internalType: "struct ConsensusData.TransactionData",
+          name: "",
+          type: "tuple",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "uint256",
+          name: "startIndex",
+          type: "uint256",
+        },
+        {
+          internalType: "uint256",
+          name: "endIndex",
+          type: "uint256",
+        },
+      ],
+      name: "getTransactionIndexToTxId",
+      outputs: [
+        {
+          internalType: "bytes32[]",
+          name: "",
+          type: "bytes32[]",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "bytes32",
+          name: "_tx_id",
+          type: "bytes32",
+        },
+        {
+          internalType: "uint256",
+          name: "_timestamp",
+          type: "uint256",
+        },
+      ],
+      name: "getTransactionStatus",
+      outputs: [
+        {
+          internalType: "enum ITransactions.TransactionStatus",
+          name: "",
+          type: "uint8",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "bytes32",
+          name: "_tx_id",
+          type: "bytes32",
+        },
+      ],
+      name: "getValidatorsForLastAppeal",
+      outputs: [
+        {
+          internalType: "address[]",
+          name: "",
+          type: "address[]",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "bytes32",
+          name: "_tx_id",
+          type: "bytes32",
+        },
+      ],
+      name: "getValidatorsForLastRound",
+      outputs: [
+        {
+          internalType: "address[]",
+          name: "",
+          type: "address[]",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "bytes32",
+          name: "role",
+          type: "bytes32",
+        },
+        {
+          internalType: "address",
+          name: "account",
+          type: "address",
+        },
+      ],
+      name: "grantRole",
+      outputs: [],
+      stateMutability: "nonpayable",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "bytes32",
+          name: "role",
+          type: "bytes32",
+        },
+        {
+          internalType: "address",
+          name: "account",
+          type: "address",
+        },
+      ],
+      name: "hasRole",
+      outputs: [
+        {
+          internalType: "bool",
+          name: "",
+          type: "bool",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "bytes32",
+          name: "_tx_id",
+          type: "bytes32",
+        },
+      ],
+      name: "hasTransactionOnAcceptanceMessages",
+      outputs: [
+        {
+          internalType: "bool",
+          name: "",
+          type: "bool",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "bytes32",
+          name: "_tx_id",
+          type: "bytes32",
+        },
+      ],
+      name: "hasTransactionOnFinalizationMessages",
+      outputs: [
+        {
+          internalType: "bool",
+          name: "",
+          type: "bool",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "address",
+          name: "_consensusMain",
+          type: "address",
+        },
+        {
+          internalType: "address",
+          name: "_transactions",
+          type: "address",
+        },
+        {
+          internalType: "address",
+          name: "_queues",
+          type: "address",
+        },
+      ],
+      name: "initialize",
+      outputs: [],
+      stateMutability: "nonpayable",
+      type: "function",
+    },
+    {
+      inputs: [],
+      name: "owner",
+      outputs: [
+        {
+          internalType: "address",
+          name: "",
+          type: "address",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [],
+      name: "pendingOwner",
+      outputs: [
+        {
+          internalType: "address",
+          name: "",
+          type: "address",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [],
+      name: "queues",
+      outputs: [
+        {
+          internalType: "contract IQueues",
+          name: "",
+          type: "address",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [],
+      name: "renounceOwnership",
+      outputs: [],
+      stateMutability: "nonpayable",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "bytes32",
+          name: "role",
+          type: "bytes32",
+        },
+        {
+          internalType: "address",
+          name: "callerConfirmation",
+          type: "address",
+        },
+      ],
+      name: "renounceRole",
+      outputs: [],
+      stateMutability: "nonpayable",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "bytes32",
+          name: "role",
+          type: "bytes32",
+        },
+        {
+          internalType: "address",
+          name: "account",
+          type: "address",
+        },
+      ],
+      name: "revokeRole",
+      outputs: [],
+      stateMutability: "nonpayable",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "address",
+          name: "_consensusMain",
+          type: "address",
+        },
+      ],
+      name: "setConsensusMain",
+      outputs: [],
+      stateMutability: "nonpayable",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "address",
+          name: "_queues",
+          type: "address",
+        },
+      ],
+      name: "setQueues",
+      outputs: [],
+      stateMutability: "nonpayable",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "address",
+          name: "_transactions",
+          type: "address",
+        },
+      ],
+      name: "setTransactions",
+      outputs: [],
+      stateMutability: "nonpayable",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "bytes4",
+          name: "interfaceId",
+          type: "bytes4",
+        },
+      ],
+      name: "supportsInterface",
+      outputs: [
+        {
+          internalType: "bool",
+          name: "",
+          type: "bool",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [],
+      name: "transactions",
+      outputs: [
+        {
+          internalType: "contract ITransactions",
+          name: "",
+          type: "address",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "address",
+          name: "newOwner",
+          type: "address",
+        },
+      ],
+      name: "transferOwnership",
+      outputs: [],
+      stateMutability: "nonpayable",
+      type: "function",
+    },
+  ],
+  bytecode: "",
+};
+
 export const testnet: GenLayerChain = defineChain({
   id: 0x107d,
   name: "Genlayer Testnet",
@@ -1457,6 +4009,7 @@ export const testnet: GenLayerChain = defineChain({
   },
   testnet: true,
   consensusMainContract: CONSENSUS_MAIN_CONTRACT,
+  consensusDataContract: CONSENSUS_DATA_CONTRACT,
   defaultNumberOfInitialValidators: 5,
   defaultConsensusMaxRotations: 3,
 });

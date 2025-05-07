@@ -6,6 +6,11 @@ export type GenLayerChain = Chain & {
     abi: any[];
     bytecode: string;
   } | null;
+  consensusDataContract: {
+    address: string;
+    abi: any[];
+    bytecode: string;
+  } | null;
   defaultNumberOfInitialValidators: number;
   defaultConsensusMaxRotations: number;
 };

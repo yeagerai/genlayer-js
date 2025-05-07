@@ -50,6 +50,6 @@
   "dependencies": {
     "eslint-plugin-import": "^2.30.0",
     "typescript-parsec": "^0.3.4",
-    "viem": "^2.21.7"
+    "viem": "^2.29.0"
   }
 }
