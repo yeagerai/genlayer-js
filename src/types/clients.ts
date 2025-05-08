@@ -18,7 +18,6 @@ export type GenLayerMethod =
   | {method: "sim_getTransactionsForAddress"; params: [address: string, filter?: "all" | "from" | "to"]}
   | {method: "eth_getTransactionCount"; params: [address: string, block: string]};
 
-export type GenLayerChain = GenLayerChain;
 /*
   Take all the properties from PublicActions<Transport, TGenLayerChain>
   Remove the transport, readContract, and getTransaction properties

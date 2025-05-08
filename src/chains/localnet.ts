@@ -25,6 +25,7 @@ export const localnet: GenLayerChain = defineChain({
   },
   testnet: true,
   consensusMainContract: null,
+  consensusDataContract: null,
   defaultNumberOfInitialValidators: 5,
   defaultConsensusMaxRotations: 3,
 });
