@@ -1,9 +1,9 @@
-import {GenLayerClient, TransactionHash, GenLayerChain} from "../types";
+import {GenLayerClient, TransactionHash, GenLayerChain, Address} from "../types";
 import {localnet} from "../chains";
 
 export function accountActions(client: GenLayerClient<GenLayerChain>) {
   return {
-    fundAccount: async ({address, amount}: {address: string; amount: number}): Promise<TransactionHash> => {
+    fundAccount: async ({address, amount}: {address: Address; amount: number}): Promise<TransactionHash> => {
       if (client.chain?.id !== localnet.id) {
         throw new Error("Client is not connected to the localnet");
       }
@@ -17,7 +17,7 @@ export function accountActions(client: GenLayerClient<GenLayerChain>) {
       address,
       block = "latest",
     }: {
-      address: string;
+      address: Address;
       block?: string;
     }): Promise<number> => {
       const addressToUse = address || client.account?.address;

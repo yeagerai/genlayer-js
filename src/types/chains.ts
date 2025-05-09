@@ -1,13 +1,14 @@
 import {Chain} from "viem";
+import {Address} from "./accounts";
 
 export type GenLayerChain = Chain & {
   consensusMainContract: {
-    address: string;
+    address: Address;
     abi: any[];
     bytecode: string;
   } | null;
   consensusDataContract: {
-    address: string;
+    address: Address;
     abi: any[];
     bytecode: string;
   } | null;

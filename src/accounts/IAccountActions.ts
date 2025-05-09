@@ -1,5 +1,5 @@
-import {TransactionHash} from "@/types";
+import {Address, TransactionHash} from "@/types";
 
 export type IAccountActions = {
-  fundAccount: ({address, amount}: {address: string; amount: number}) => Promise<TransactionHash>;
+  fundAccount: ({address, amount}: {address: Address; amount: number}) => Promise<TransactionHash>;
 };

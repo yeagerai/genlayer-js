@@ -9,14 +9,15 @@ import {SnapSource} from "@/types/snapSource";
 import {MetaMaskClientResult} from "@/types/metamaskClientResult";
 
 export type GenLayerMethod =
-  | {method: "sim_fundAccount"; params: [address: string, amount: number]}
+  | {method: "sim_fundAccount"; params: [address: Address, amount: number]}
   | {method: "eth_getTransactionByHash"; params: [hash: TransactionHash]}
   | {method: "eth_call"; params: [requestParams: any, blockNumberOrHash: string]}
   | {method: "eth_sendRawTransaction"; params: [signedTransaction: string]}
-  | {method: "gen_getContractSchema"; params: [address: string]}
+  | {method: "gen_getContractSchema"; params: [address: Address]}
   | {method: "gen_getContractSchemaForCode"; params: [contractCode: string]}
-  | {method: "sim_getTransactionsForAddress"; params: [address: string, filter?: "all" | "from" | "to"]}
-  | {method: "eth_getTransactionCount"; params: [address: string, block: string]};
+  | {method: "sim_getTransactionsForAddress"; params: [address: Address, filter?: "all" | "from" | "to"]}
+  | {method: "eth_getTransactionCount"; params: [address: Address, block: string]}
+  | {method: "gen_call"; params: [requestParams: any]};
 
 /*
   Take all the properties from PublicActions<Transport, TGenLayerChain>
@@ -66,14 +67,14 @@ export type GenLayerClient<TGenLayerChain extends GenLayerChain> = Omit<
       consensusMaxRotations?: number;
     }) => Promise<`0x${string}`>;
     getTransaction: (args: {hash: TransactionHash}) => Promise<GenLayerTransaction>;
-    getCurrentNonce: (args: {address: string}) => Promise<number>;
+    getCurrentNonce: (args: {address: Address}) => Promise<number>;
     waitForTransactionReceipt: (args: {
       hash: TransactionHash;
       status?: TransactionStatus;
       interval?: number;
       retries?: number;
     }) => Promise<GenLayerTransaction>;
-    getContractSchema: (address: string) => Promise<ContractSchema>;
+    getContractSchema: (address: Address) => Promise<ContractSchema>;
     getContractSchemaForCode: (contractCode: string | Uint8Array) => Promise<ContractSchema>;
     initializeConsensusSmartContract: (forceReset?: boolean) => Promise<void>;
     connect: (network?: Network, snapSource?: SnapSource) => Promise<void>;
