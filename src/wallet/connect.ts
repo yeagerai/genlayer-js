@@ -1,17 +1,17 @@
-import { localnet } from "@/chains/localnet";
-import { GenLayerClient, SimulatorChain } from "@/types";
-import { Network } from "@/types/network";
-import { SnapSource } from "@/types/snapSource";
-import { snapID } from "@/config/snapID";
+import {localnet} from "@/chains/localnet";
+import {GenLayerClient, GenLayerChain} from "@/types";
+import {Network} from "@/types/network";
+import {SnapSource} from "@/types/snapSource";
+import {snapID} from "@/config/snapID";
 
 const networks = {
   localnet,
 };
 
 export const connect = async (
-  client: GenLayerClient<SimulatorChain>,
+  client: GenLayerClient<GenLayerChain>,
   network: Network = "localnet",
-  snapSource: SnapSource = 'npm'
+  snapSource: SnapSource = "npm",
 ): Promise<void> => {
   if (!window.ethereum) {
     throw new Error("MetaMask is not installed.");
@@ -34,7 +34,7 @@ export const connect = async (
     blockExplorerUrls: [selectedNetwork.blockExplorers?.default.url],
   };
 
-  const currentChainId = await window.ethereum.request({ method: "eth_chainId" });
+  const currentChainId = await window.ethereum.request({method: "eth_chainId"});
   if (currentChainId !== chainIdHex) {
     await window.ethereum.request({
       method: "wallet_addEthereumChain",
@@ -42,15 +42,13 @@ export const connect = async (
     });
     await window.ethereum.request({
       method: "wallet_switchEthereumChain",
-      params: [{ chainId: chainIdHex }],
+      params: [{chainId: chainIdHex}],
     });
   }
 
-  const id = snapSource === 'local' ? snapID.local : snapID.npm;
-  const installedSnaps: any = await window.ethereum.request({ method: "wallet_getSnaps" });
-  const isGenLayerSnapInstalled = Object.values(installedSnaps).some(
-    (snap: any) => snap.id === id
-  );
+  const id = snapSource === "local" ? snapID.local : snapID.npm;
+  const installedSnaps: any = await window.ethereum.request({method: "wallet_getSnaps"});
+  const isGenLayerSnapInstalled = Object.values(installedSnaps).some((snap: any) => snap.id === id);
 
   if (!isGenLayerSnapInstalled) {
     await window.ethereum.request({

@@ -1,9 +1,20 @@
-import {Account, createClient as createViemClient, publicActions, custom, Address, walletActions} from "viem";
+import {
+  Account,
+  createClient as createViemClient,
+  createPublicClient as createPublicViemClient,
+  publicActions,
+  custom,
+  Address,
+  walletActions,
+  Transport,
+  PublicClient,
+  Chain,
+} from "viem";
 import {accountActions} from "../accounts/actions";
-import {contractActions, overrideContractActions} from "../contracts/actions";
-import {transactionActions} from "../transactions/actions";
+import {contractActions} from "../contracts/actions";
+import {receiptActions, transactionActions} from "../transactions/actions";
 import {walletActions as genlayerWalletActions} from "../wallet/actions";
-import {GenLayerClient, SimulatorChain} from "@/types";
+import {GenLayerClient, GenLayerChain} from "@/types";
 import {chainActions} from "@/chains/actions";
 import {localnet} from "@/chains";
 
@@ -20,15 +31,11 @@ interface ClientConfig {
   account?: Account | Address;
 }
 
-export const createClient = (config: ClientConfig = {chain: localnet}) => {
-  const chainConfig = config.chain || localnet;
-  if (config.endpoint) {
-    chainConfig.rpcUrls.default.http = [config.endpoint];
-  }
+const getCustomTransportConfig = (config: ClientConfig) => {
   const isAddress = typeof config.account !== "object";
 
-  const customTransport = {
-    async request({method, params}: {method: string; params: any[]}) {
+  return {
+    async request({method, params = []}: {method: string; params: any[]}) {
       if (method.startsWith("eth_") && isAddress) {
         try {
           return await window.ethereum?.request({method, params});
@@ -37,8 +44,12 @@ export const createClient = (config: ClientConfig = {chain: localnet}) => {
           throw err;
         }
       } else {
+        if (!config.chain) {
+          throw new Error("Chain is not set");
+        }
+
         try {
-          const response = await fetch(chainConfig.rpcUrls.default.http[0], {
+          const response = await fetch(config.chain.rpcUrls.default.http[0], {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -65,24 +76,56 @@ export const createClient = (config: ClientConfig = {chain: localnet}) => {
       }
     },
   };
+};
+
+export const createClient = (config: ClientConfig = {chain: localnet}): GenLayerClient<GenLayerChain> => {
+  const chainConfig = config.chain || localnet;
+  if (config.endpoint) {
+    chainConfig.rpcUrls.default.http = [config.endpoint];
+  }
+
+  const customTransport = custom(getCustomTransportConfig(config));
+  const publicClient = createPublicClient(chainConfig as GenLayerChain, customTransport).extend(
+    publicActions,
+  );
 
   const baseClient = createViemClient({
     chain: chainConfig,
-    transport: custom(customTransport),
+    transport: customTransport,
     ...(config.account ? {account: config.account} : {}),
-  })
-    .extend(publicActions)
-    .extend(walletActions)
-    .extend(client => accountActions(client as unknown as GenLayerClient<SimulatorChain>))
-    .extend(client => transactionActions(client as unknown as GenLayerClient<SimulatorChain>))
-    .extend(client => contractActions(client as unknown as GenLayerClient<SimulatorChain>))
-    .extend(client => chainActions(client as unknown as GenLayerClient<SimulatorChain>))
-    .extend((client) => genlayerWalletActions(client as unknown as GenLayerClient<SimulatorChain>));
-
-  // Initialize in the background
-  baseClient.initializeConsensusSmartContract().catch(error => {
-    console.error("Failed to initialize consensus smart contract:", error);
   });
 
-  return overrideContractActions(baseClient as unknown as GenLayerClient<SimulatorChain>);
+  // First extend with basic actions
+  const clientWithBasicActions = baseClient
+    .extend(publicActions)
+    .extend(walletActions)
+    .extend(client => accountActions(client as unknown as GenLayerClient<GenLayerChain>));
+
+  // Create a client with all actions except transaction actions
+  const clientWithAllActions = {
+    ...clientWithBasicActions,
+    ...contractActions(clientWithBasicActions as unknown as GenLayerClient<GenLayerChain>, publicClient),
+    ...chainActions(clientWithBasicActions as unknown as GenLayerClient<GenLayerChain>),
+    ...genlayerWalletActions(clientWithBasicActions as unknown as GenLayerClient<GenLayerChain>),
+    ...transactionActions(clientWithBasicActions as unknown as GenLayerClient<GenLayerChain>, publicClient),
+  } as unknown as GenLayerClient<GenLayerChain>;
+
+  // Add transaction actions last, after all other actions are in place
+  const finalClient = {
+    ...clientWithAllActions,
+    ...receiptActions(clientWithAllActions as unknown as GenLayerClient<GenLayerChain>, publicClient),
+  } as unknown as GenLayerClient<GenLayerChain>;
+
+  // Initialize in the background
+  finalClient.initializeConsensusSmartContract().catch(error => {
+    console.error("Failed to initialize consensus smart contract:", error);
+  });
+  return finalClient;
+};
+
+export const createPublicClient = (
+  chainConfig: GenLayerChain,
+  customTransport: Transport,
+): PublicClient<Transport, Chain> => {
+  return createPublicViemClient({chain: chainConfig, transport: customTransport});
 };
