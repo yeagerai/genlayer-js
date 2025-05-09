@@ -1,11 +1,11 @@
-import {defineChain} from "viem";
+import {Address, defineChain} from "viem";
 import {GenLayerChain} from "@/types";
 
 // chains/localnet.ts
 const TESTNET_JSON_RPC_URL = " http://34.32.169.58:9151";
 
 const CONSENSUS_MAIN_CONTRACT = {
-  address: "0x174782d5819dD26F3d6967c995EE43db7DB824F8",
+  address: "0x174782d5819dD26F3d6967c995EE43db7DB824F8" as Address,
   abi: [
     {
       inputs: [],
@@ -1437,7 +1437,7 @@ const CONSENSUS_MAIN_CONTRACT = {
 };
 
 const CONSENSUS_DATA_CONTRACT = {
-  address: "0x88B0F18613Db92Bf970FfE264E02496e20a74D16",
+  address: "0x88B0F18613Db92Bf970FfE264E02496e20a74D16" as Address,
   abi: [
     {
       inputs: [],
@@ -4004,7 +4004,7 @@ export const testnet: GenLayerChain = defineChain({
   blockExplorers: {
     default: {
       name: "GenLayer Explorer",
-      url: "https://genlayer-explorer-env-zksync-yeager-ai-c81b47f9.vercel.app",
+      url: "https://explorer-asimov.genlayer.com",
     },
   },
   testnet: true,
