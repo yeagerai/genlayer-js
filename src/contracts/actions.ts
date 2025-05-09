@@ -1,14 +1,7 @@
 import * as calldata from "@/abi/calldata";
-import {serialize, serializeOne} from "@/abi/transactions";
-import {
-  Account,
-  ContractSchema,
-  GenLayerChain,
-  GenLayerClient,
-  CalldataEncodable,
-  Address,
-  TransactionStatus,
-} from "@/types";
+import {serialize} from "@/abi/transactions";
+import {localnet} from "@/chains/localnet";
+import {Account, ContractSchema, GenLayerChain, GenLayerClient, CalldataEncodable, Address} from "@/types";
 import {fromHex, toHex, zeroAddress, encodeFunctionData, PublicClient, parseEventLogs} from "viem";
 
 function makeCalldataObject(
@@ -50,7 +43,10 @@ function makeCalldataObject(
 
 export const contractActions = (client: GenLayerClient<GenLayerChain>, publicClient: PublicClient) => {
   return {
-    getContractSchema: async (address: string): Promise<ContractSchema> => {
+    getContractSchema: async (address: Address): Promise<ContractSchema> => {
+      if (client.chain.id !== localnet.id) {
+        throw new Error("Contract schema is not supported on this network");
+      }
       const schema = (await client.request({
         method: "gen_getContractSchema",
         params: [address],
@@ -58,6 +54,9 @@ export const contractActions = (client: GenLayerClient<GenLayerChain>, publicCli
       return schema as unknown as ContractSchema;
     },
     getContractSchemaForCode: async (contractCode: string | Uint8Array): Promise<ContractSchema> => {
+      if (client.chain.id !== localnet.id) {
+        throw new Error("Contract schema is not supported on this network");
+      }
       const schema = (await client.request({
         method: "gen_getContractSchemaForCode",
         params: [toHex(contractCode)],
@@ -70,36 +69,32 @@ export const contractActions = (client: GenLayerClient<GenLayerChain>, publicCli
       functionName: string;
       args?: CalldataEncodable[];
       kwargs?: Map<string, CalldataEncodable> | {[key: string]: CalldataEncodable};
-      stateStatus?: TransactionStatus;
       rawReturn?: RawReturn;
+      leaderOnly?: boolean;
     }): Promise<RawReturn extends true ? `0x${string}` : CalldataEncodable> => {
-      const {
-        account,
-        address,
-        functionName,
-        args: callArgs,
-        kwargs,
-        stateStatus = TransactionStatus.ACCEPTED,
-      } = args;
-      const encodedData = calldata.encode(makeCalldataObject(functionName, callArgs, kwargs));
-      const serializedData = serializeOne(encodedData);
+      const {account, address, functionName, args: callArgs, kwargs, leaderOnly = false} = args;
+      const encodedData = [calldata.encode(makeCalldataObject(functionName, callArgs, kwargs)), leaderOnly];
+      const serializedData = serialize(encodedData);
 
       const senderAddress = account?.address ?? client.account?.address;
 
       const requestParams = {
+        type: "read",
         to: address,
         from: senderAddress,
         data: serializedData,
+        transaction_hash_variant: "latest-final",
       };
       const result = await client.request({
-        method: "eth_call",
-        params: [requestParams, stateStatus == TransactionStatus.FINALIZED ? "finalized" : "latest"],
+        method: "gen_call",
+        params: [requestParams],
       });
+      const prefixedResult = `0x${result}` as `0x${string}`;
 
       if (args.rawReturn) {
-        return result;
+        return prefixedResult;
       }
-      const resultBinary = fromHex(result, "bytes");
+      const resultBinary = fromHex(prefixedResult, "bytes");
       return calldata.decode(resultBinary) as any;
     },
     writeContract: async (args: {
