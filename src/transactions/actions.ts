@@ -32,9 +32,9 @@ export const receiptActions = (client: GenLayerClient<GenLayerChain>, publicClie
     interval?: number;
     retries?: number;
   }): Promise<GenLayerTransaction> => {
-    const transaction = (await client.getTransaction({
+    const transaction = await client.getTransaction({
       hash,
-    })) as unknown as GenLayerRawTransaction;
+    });
 
     if (!transaction) {
       throw new Error("Transaction not found");
@@ -49,7 +49,7 @@ export const receiptActions = (client: GenLayerClient<GenLayerChain>, publicClie
       if (client.chain.id === localnet.id) {
         return _decodeLocalnetTransaction(transaction as unknown as GenLayerTransaction);
       }
-      return _decodeTransaction(transaction);
+      return transaction;
     }
 
     if (retries === 0) {
@@ -67,8 +67,8 @@ export const receiptActions = (client: GenLayerClient<GenLayerChain>, publicClie
 });
 
 export const transactionActions = (client: GenLayerClient<GenLayerChain>, publicClient: PublicClient) => ({
-  getTransaction: async ({hash}: {hash: TransactionHash}): Promise<GenLayerRawTransaction> => {
-    return publicClient.readContract({
+  getTransaction: async ({hash}: {hash: TransactionHash}): Promise<GenLayerTransaction> => {
+    const transaction = (await publicClient.readContract({
       address: client.chain.consensusDataContract?.address as Address,
       abi: client.chain.consensusDataContract?.abi as Abi,
       functionName: "getTransactionData",
@@ -76,7 +76,8 @@ export const transactionActions = (client: GenLayerClient<GenLayerChain>, public
         hash,
         Math.round(new Date().getTime() / 1000), // unix seconds
       ],
-    }) as unknown as Promise<GenLayerRawTransaction>;
+    })) as unknown as GenLayerRawTransaction;
+    return _decodeTransaction(transaction);
   },
 });
 
