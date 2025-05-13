@@ -1,10 +1,10 @@
 import {GenLayerClient, GenLayerChain} from "@/types";
-import {testnet} from "./testnet";
+import {testnetAsimov} from "./testnetAsimov";
 
 export function chainActions(client: GenLayerClient<GenLayerChain>) {
   return {
     initializeConsensusSmartContract: async (forceReset: boolean = false): Promise<void> => {
-      if (client.chain?.id === testnet.id) {
+      if (client.chain?.id === testnetAsimov.id) {
         return;
       }
 

@@ -1,4 +1,6 @@
 import {localnet} from "@/chains/localnet";
+import {studionet} from "@/chains/studionet";
+import {testnetAsimov} from "@/chains/testnetAsimov";
 import {GenLayerClient, GenLayerChain} from "@/types";
 import {Network} from "@/types/network";
 import {SnapSource} from "@/types/snapSource";
@@ -6,17 +8,19 @@ import {snapID} from "@/config/snapID";
 
 const networks = {
   localnet,
+  studionet,
+  testnetAsimov,
 };
 
 export const connect = async (
   client: GenLayerClient<GenLayerChain>,
-  network: Network = "localnet",
+  network: Network = "studionet",
   snapSource: SnapSource = "npm",
 ): Promise<void> => {
   if (!window.ethereum) {
     throw new Error("MetaMask is not installed.");
   }
-  if (network === "testnet" || network === "mainnet") {
+  if (network === "mainnet") {
     throw new Error(`${network} is not available yet. Please use localnet.`);
   }
 

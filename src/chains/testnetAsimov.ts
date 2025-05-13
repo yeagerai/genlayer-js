@@ -3,7 +3,7 @@ import {GenLayerChain} from "@/types";
 
 // chains/localnet.ts
 const TESTNET_JSON_RPC_URL = " http://34.32.169.58:9151";
-
+const EXPLORER_URL = "https://explorer-asimov.genlayer.com/";
 const CONSENSUS_MAIN_CONTRACT = {
   address: "0x174782d5819dD26F3d6967c995EE43db7DB824F8" as Address,
   abi: [
@@ -3988,9 +3988,9 @@ const CONSENSUS_DATA_CONTRACT = {
   bytecode: "",
 };
 
-export const testnet: GenLayerChain = defineChain({
+export const testnetAsimov: GenLayerChain = defineChain({
   id: 0x107d,
-  name: "Genlayer Testnet",
+  name: "Genlayer Asimov Testnet",
   rpcUrls: {
     default: {
       http: [TESTNET_JSON_RPC_URL],
@@ -4003,8 +4003,8 @@ export const testnet: GenLayerChain = defineChain({
   },
   blockExplorers: {
     default: {
-      name: "GenLayer Explorer",
-      url: "https://explorer-asimov.genlayer.com",
+      name: "GenLayer Asimov Explorer",
+      url: EXPLORER_URL,
     },
   },
   testnet: true,
