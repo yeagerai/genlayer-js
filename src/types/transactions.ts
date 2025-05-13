@@ -119,6 +119,11 @@ export const voteTypeNameToNumber = {
 
 export type TransactionType = "deploy" | "call";
 
+export enum TransactionHashVariant {
+  LATEST_FINAL = "latest-final",
+  LATEST_NONFINAL = "latest-nonfinal",
+}
+
 export type DecodedDeployData = {
   code?: Hex;
   constructorArgs?: any; // Type this more strictly if possible

@@ -1,7 +1,15 @@
 import * as calldata from "@/abi/calldata";
 import {serialize} from "@/abi/transactions";
 import {localnet} from "@/chains/localnet";
-import {Account, ContractSchema, GenLayerChain, GenLayerClient, CalldataEncodable, Address} from "@/types";
+import {
+  Account,
+  ContractSchema,
+  GenLayerChain,
+  GenLayerClient,
+  CalldataEncodable,
+  Address,
+  TransactionHashVariant,
+} from "@/types";
 import {fromHex, toHex, zeroAddress, encodeFunctionData, PublicClient, parseEventLogs} from "viem";
 
 function makeCalldataObject(
@@ -71,8 +79,17 @@ export const contractActions = (client: GenLayerClient<GenLayerChain>, publicCli
       kwargs?: Map<string, CalldataEncodable> | {[key: string]: CalldataEncodable};
       rawReturn?: RawReturn;
       leaderOnly?: boolean;
+      transactionHashVariant?: TransactionHashVariant;
     }): Promise<RawReturn extends true ? `0x${string}` : CalldataEncodable> => {
-      const {account, address, functionName, args: callArgs, kwargs, leaderOnly = false} = args;
+      const {
+        account,
+        address,
+        functionName,
+        args: callArgs,
+        kwargs,
+        leaderOnly = false,
+        transactionHashVariant = TransactionHashVariant.LATEST_FINAL,
+      } = args;
       const encodedData = [calldata.encode(makeCalldataObject(functionName, callArgs, kwargs)), leaderOnly];
       const serializedData = serialize(encodedData);
 
@@ -83,7 +100,7 @@ export const contractActions = (client: GenLayerClient<GenLayerChain>, publicCli
         to: address,
         from: senderAddress,
         data: serializedData,
-        transaction_hash_variant: "latest-final",
+        transaction_hash_variant: transactionHashVariant,
       };
       const result = await client.request({
         method: "gen_call",
