@@ -233,6 +233,12 @@ const _sendTransaction = async ({
   const serializedTransaction = await senderAccount.signTransaction(transactionRequest);
 
   const txHash = await client.sendRawTransaction({serializedTransaction: serializedTransaction});
+
+  // TODO: remove this once DXP-298 is merged
+  if (client.chain.id === localnet.id) {
+    return txHash;
+  }
+
   const receipt = await publicClient.waitForTransactionReceipt({hash: txHash});
 
   if (receipt.status === "reverted") {
