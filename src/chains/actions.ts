@@ -4,7 +4,7 @@ import {testnet} from "./testnet";
 export function chainActions(client: GenLayerClient<GenLayerChain>) {
   return {
     initializeConsensusSmartContract: async (forceReset: boolean = false): Promise<void> => {
-      if (client.chain?.id !== testnet.id) {
+      if (client.chain?.id === testnet.id) {
         return;
       }
 
