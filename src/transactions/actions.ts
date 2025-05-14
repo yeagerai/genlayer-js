@@ -75,6 +75,7 @@ export const transactionActions = (client: GenLayerClient<GenLayerChain>, public
         (transaction.status as string) === "ACTIVATED" ? TransactionStatus.PENDING : transaction.status;
 
       transaction.status = Number(transactionsStatusNameToNumber[localnetStatus as TransactionStatus]);
+      transaction.statusName = localnetStatus as TransactionStatus;
       return _decodeLocalnetTransaction(transaction as unknown as GenLayerTransaction);
     }
     const transaction = (await publicClient.readContract({
