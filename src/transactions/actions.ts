@@ -68,6 +68,16 @@ export const receiptActions = (client: GenLayerClient<GenLayerChain>, publicClie
 
 export const transactionActions = (client: GenLayerClient<GenLayerChain>, publicClient: PublicClient) => ({
   getTransaction: async ({hash}: {hash: TransactionHash}): Promise<GenLayerTransaction> => {
+    // TODO: remove this once DXP-298 is merged
+    if (client.chain.id === localnet.id) {
+      const transaction = await client.getTransaction({hash});
+      const localnetStatus =
+        (transaction.status as string) === "ACTIVATED" ? TransactionStatus.PENDING : transaction.status;
+
+      transaction.status = Number(transactionsStatusNameToNumber[localnetStatus as TransactionStatus]);
+      transaction.statusName = localnetStatus as TransactionStatus;
+      return _decodeLocalnetTransaction(transaction as unknown as GenLayerTransaction);
+    }
     const transaction = (await publicClient.readContract({
       address: client.chain.consensusDataContract?.address as Address,
       abi: client.chain.consensusDataContract?.abi as Abi,
@@ -175,13 +185,14 @@ const _decodeTransaction = (tx: GenLayerRawTransaction): GenLayerTransaction => 
 };
 
 const _decodeLocalnetTransaction = (tx: GenLayerTransaction): GenLayerTransaction => {
+  if (!tx.data) return tx;
   try {
     const leaderReceipt = tx.consensus_data?.leader_receipt;
     if (leaderReceipt) {
-      if (leaderReceipt.result) {
+      if (leaderReceipt.result && typeof leaderReceipt.result === "string") {
         leaderReceipt.result = resultToUserFriendlyJson(leaderReceipt.result);
       }
-      if (leaderReceipt.calldata) {
+      if (leaderReceipt.calldata && typeof leaderReceipt.calldata === "string") {
         leaderReceipt.calldata = {
           base64: leaderReceipt.calldata as string,
           ...calldataToUserFriendlyJson(b64ToArray(leaderReceipt.calldata as string)),
@@ -196,7 +207,7 @@ const _decodeLocalnetTransaction = (tx: GenLayerTransaction): GenLayerTransactio
         );
       }
     }
-    if (tx.data?.calldata) {
+    if (tx.data?.calldata && typeof tx.data.calldata === "string") {
       tx.data.calldata = {
         base64: tx.data.calldata as string,
         ...calldataToUserFriendlyJson(b64ToArray(tx.data.calldata as string)),
