@@ -1,5 +1,5 @@
 import * as calldata from "@/abi/calldata";
-import {serialize, serializeOne} from "@/abi/transactions";
+import {serialize} from "@/abi/transactions";
 import {localnet} from "@/chains/localnet";
 import {
   Account,
@@ -9,7 +9,6 @@ import {
   CalldataEncodable,
   Address,
   TransactionHashVariant,
-  TransactionStatus,
 } from "@/types";
 import {fromHex, toHex, zeroAddress, encodeFunctionData, PublicClient, parseEventLogs} from "viem";
 
