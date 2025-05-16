@@ -1,5 +1,5 @@
 import * as calldata from "@/abi/calldata";
-import {serialize, serializeOne} from "@/abi/transactions";
+import {serialize} from "@/abi/transactions";
 import {localnet} from "@/chains/localnet";
 import {
   Account,
@@ -9,7 +9,6 @@ import {
   CalldataEncodable,
   Address,
   TransactionHashVariant,
-  TransactionStatus,
 } from "@/types";
 import {fromHex, toHex, zeroAddress, encodeFunctionData, PublicClient, parseEventLogs} from "viem";
 
@@ -91,25 +90,6 @@ export const contractActions = (client: GenLayerClient<GenLayerChain>, publicCli
         leaderOnly = false,
         transactionHashVariant = TransactionHashVariant.LATEST_FINAL,
       } = args;
-
-      // TODO: remove this once DXP-298 is merged
-      if (client.chain.id === localnet.id) {
-        return _localnetReadContract({
-          client,
-          args: {
-            account,
-            address,
-            functionName,
-            args: callArgs,
-            kwargs,
-            stateStatus:
-              transactionHashVariant === TransactionHashVariant.LATEST_FINAL
-                ? TransactionStatus.FINALIZED
-                : TransactionStatus.ACCEPTED,
-            rawReturn: args.rawReturn ?? false,
-          },
-        });
-      }
 
       const encodedData = [calldata.encode(makeCalldataObject(functionName, callArgs, kwargs)), leaderOnly];
       const serializedData = serialize(encodedData);
@@ -200,51 +180,6 @@ export const contractActions = (client: GenLayerClient<GenLayerChain>, publicCli
     },
   };
 };
-// TODO: remove this once DXP-298 is merged
-const _localnetReadContract = async ({
-  client,
-  args,
-}: {
-  client: GenLayerClient<GenLayerChain>;
-  args: {
-    account?: Account;
-    address: Address;
-    functionName: string;
-    args?: CalldataEncodable[];
-    kwargs?: Map<string, CalldataEncodable> | {[key: string]: CalldataEncodable};
-    stateStatus?: TransactionStatus;
-    rawReturn?: boolean;
-  };
-}) => {
-  const {
-    account,
-    address,
-    functionName,
-    args: callArgs,
-    kwargs,
-    stateStatus = TransactionStatus.ACCEPTED,
-  } = args;
-  const encodedData = calldata.encode(makeCalldataObject(functionName, callArgs, kwargs));
-  const serializedData = serializeOne(encodedData);
-
-  const senderAddress = account?.address ?? client.account?.address;
-
-  const requestParams = {
-    to: address,
-    from: senderAddress,
-    data: serializedData,
-  };
-  const result = await client.request({
-    method: "eth_call",
-    params: [requestParams, stateStatus == TransactionStatus.FINALIZED ? "finalized" : "latest"],
-  });
-
-  if (args.rawReturn) {
-    return result;
-  }
-  const resultBinary = fromHex(result, "bytes");
-  return calldata.decode(resultBinary) as any;
-};
 
 const _sendTransaction = async ({
   client,
@@ -316,11 +251,6 @@ const _sendTransaction = async ({
   const serializedTransaction = await senderAccount.signTransaction(transactionRequest);
 
   const txHash = await client.sendRawTransaction({serializedTransaction: serializedTransaction});
-
-  // TODO: remove this once DXP-298 is merged
-  if (client.chain.id === localnet.id) {
-    return txHash;
-  }
 
   const receipt = await publicClient.waitForTransactionReceipt({hash: txHash});
 
