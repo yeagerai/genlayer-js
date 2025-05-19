@@ -68,7 +68,6 @@ export const receiptActions = (client: GenLayerClient<GenLayerChain>, publicClie
 
 export const transactionActions = (client: GenLayerClient<GenLayerChain>, publicClient: PublicClient) => ({
   getTransaction: async ({hash}: {hash: TransactionHash}): Promise<GenLayerTransaction> => {
-    // TODO: remove this once DXP-298 is merged
     if (client.chain.id === localnet.id) {
       const transaction = await client.getTransaction({hash});
       const localnetStatus =
