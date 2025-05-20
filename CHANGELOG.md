@@ -1,5 +1,12 @@
 
 
+## 0.9.4 (2025-05-20)
+
+
+### Bug Fixes
+
+* remove DXP-298 code ([#85](https://github.com/yeagerai/genlayer-js/issues/85)) ([3db4cff](https://github.com/yeagerai/genlayer-js/commit/3db4cffedd1a53396d390883dcdee5d26f775d72))
+
 ## 0.9.3 (2025-05-14)
 
 ## 0.9.2 (2025-05-14)
