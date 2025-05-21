@@ -1,5 +1,12 @@
 
 
+## 0.9.5 (2025-05-21)
+
+
+### Bug Fixes
+
+* update readContract with TransactionHashVariant ([#86](https://github.com/yeagerai/genlayer-js/issues/86)) ([7cbeb04](https://github.com/yeagerai/genlayer-js/commit/7cbeb040b55c4bc3acf173bdae51da51deef7a83))
+
 ## 0.9.4 (2025-05-20)
 
 
