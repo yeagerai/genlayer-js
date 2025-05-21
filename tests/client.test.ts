@@ -4,7 +4,7 @@ import {localnet} from "@/chains/localnet";
 import {Address} from "../src/types/accounts";
 import {createAccount, generatePrivateKey} from "../src/accounts/account";
 import {vi} from "vitest";
-import {TransactionStatus} from "../src/types/transactions";
+import {TransactionHashVariant} from "../src/types/transactions";
 
 // Setup fetch mock
 const mockFetch = vi.fn();
@@ -95,7 +95,7 @@ describe("Client Overrides", () => {
       address: contractAddress as Address,
       functionName: "testFunction",
       args: ["arg1", "arg2"],
-      stateStatus: TransactionStatus.ACCEPTED, // Kept as is, matches type, ignored by current gen_call impl.
+      transactionHashVariant: TransactionHashVariant.LATEST_NONFINAL,
     });
 
     expect(lastGenCallParams).toEqual([
@@ -104,7 +104,7 @@ describe("Client Overrides", () => {
         to: contractAddress,
         from: account.address,
         data: expect.any(String), // The data is complex, checking type is often sufficient
-        transaction_hash_variant: "latest-final",
+        transaction_hash_variant: TransactionHashVariant.LATEST_NONFINAL,
       },
     ]);
   });
@@ -126,7 +126,7 @@ describe("Client Overrides", () => {
       address: contractAddress as Address,
       functionName: "testFunction",
       args: ["arg1", "arg2"],
-      stateStatus: TransactionStatus.ACCEPTED,
+      transactionHashVariant: TransactionHashVariant.LATEST_FINAL,
     });
 
     expect(lastGenCallParams).toEqual([
@@ -135,7 +135,7 @@ describe("Client Overrides", () => {
         to: contractAddress,
         from: overrideAccount.address,
         data: expect.any(String),
-        transaction_hash_variant: "latest-final",
+        transaction_hash_variant: TransactionHashVariant.LATEST_FINAL,
       },
     ]);
   });
@@ -164,7 +164,7 @@ describe("Client Overrides", () => {
         to: contractAddress,
         from: accountAddressString, // Expecting the address string directly
         data: expect.any(String),
-        transaction_hash_variant: "latest-final",
+        transaction_hash_variant: TransactionHashVariant.LATEST_FINAL,
       },
     ]);
   });

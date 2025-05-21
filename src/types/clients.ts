@@ -1,5 +1,5 @@
 import {Transport, Client, PublicActions, WalletActions} from "viem";
-import {GenLayerTransaction, TransactionHash, TransactionStatus} from "./transactions";
+import {GenLayerTransaction, TransactionHash, TransactionStatus, TransactionHashVariant} from "./transactions";
 import {GenLayerChain} from "./chains";
 import {Address, Account} from "./accounts";
 import {CalldataEncodable} from "./calldata";
@@ -43,10 +43,10 @@ export type GenLayerClient<TGenLayerChain extends GenLayerChain> = Omit<
       account?: Account;
       address: Address;
       functionName: string;
-      stateStatus?: TransactionStatus;
       args?: CalldataEncodable[];
       kwargs?: Map<string, CalldataEncodable> | {[key: string]: CalldataEncodable};
       rawReturn?: RawReturn;
+      transactionHashVariant?: TransactionHashVariant;
     }) => Promise<RawReturn extends true ? `0x${string}` : CalldataEncodable>;
     writeContract: (args: {
       account?: Account;
