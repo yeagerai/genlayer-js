@@ -4,7 +4,7 @@ import {localnet} from "@/chains/localnet";
 import {Address} from "../src/types/accounts";
 import {createAccount, generatePrivateKey} from "../src/accounts/account";
 import {vi} from "vitest";
-import {TransactionStatus, TransactionHashVariant} from "../src/types/transactions";
+import {TransactionHashVariant} from "../src/types/transactions";
 
 // Setup fetch mock
 const mockFetch = vi.fn();
