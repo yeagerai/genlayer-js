@@ -1,5 +1,25 @@
 
 
+## 0.9.5 (2025-05-21)
+
+
+### Bug Fixes
+
+* update readContract with TransactionHashVariant ([#86](https://github.com/yeagerai/genlayer-js/issues/86)) ([7cbeb04](https://github.com/yeagerai/genlayer-js/commit/7cbeb040b55c4bc3acf173bdae51da51deef7a83))
+
+## 0.9.4 (2025-05-20)
+
+
+### Bug Fixes
+
+* remove DXP-298 code ([#85](https://github.com/yeagerai/genlayer-js/issues/85)) ([3db4cff](https://github.com/yeagerai/genlayer-js/commit/3db4cffedd1a53396d390883dcdee5d26f775d72))
+
+## 0.9.3 (2025-05-14)
+
+## 0.9.2 (2025-05-14)
+
+## 0.9.1 (2025-05-09)
+
 ## 0.9.0 (2025-03-12)
 
 

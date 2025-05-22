@@ -1,6 +1,6 @@
 import {Transport, Client, PublicActions, WalletActions} from "viem";
-import {GenLayerTransaction, TransactionHash, TransactionStatus} from "./transactions";
-import {SimulatorChain} from "./chains";
+import {GenLayerTransaction, TransactionHash, TransactionStatus, TransactionHashVariant} from "./transactions";
+import {GenLayerChain} from "./chains";
 import {Address, Account} from "./accounts";
 import {CalldataEncodable} from "./calldata";
 import {ContractSchema} from "./contracts";
@@ -9,31 +9,32 @@ import {SnapSource} from "@/types/snapSource";
 import {MetaMaskClientResult} from "@/types/metamaskClientResult";
 
 export type GenLayerMethod =
-  | {method: "sim_fundAccount"; params: [address: string, amount: number]}
+  | {method: "sim_fundAccount"; params: [address: Address, amount: number]}
   | {method: "eth_getTransactionByHash"; params: [hash: TransactionHash]}
   | {method: "eth_call"; params: [requestParams: any, blockNumberOrHash: string]}
   | {method: "eth_sendRawTransaction"; params: [signedTransaction: string]}
-  | {method: "gen_getContractSchema"; params: [address: string]}
+  | {method: "gen_getContractSchema"; params: [address: Address]}
   | {method: "gen_getContractSchemaForCode"; params: [contractCode: string]}
-  | {method: "sim_getTransactionsForAddress"; params: [address: string, filter?: "all" | "from" | "to"]}
-  | {method: "eth_getTransactionCount"; params: [address: string, block: string]};
+  | {method: "sim_getTransactionsForAddress"; params: [address: Address, filter?: "all" | "from" | "to"]}
+  | {method: "eth_getTransactionCount"; params: [address: Address, block: string]}
+  | {method: "gen_call"; params: [requestParams: any]};
 
 /*
-  Take all the properties from PublicActions<Transport, TSimulatorChain>
+  Take all the properties from PublicActions<Transport, TGenLayerChain>
   Remove the transport, readContract, and getTransaction properties
   The resulting type will have everything from PublicActions EXCEPT those
   two properties which are added later
 */
-export type GenLayerClient<TSimulatorChain extends SimulatorChain> = Omit<
-  Client<Transport, TSimulatorChain>,
+export type GenLayerClient<TGenLayerChain extends GenLayerChain> = Omit<
+  Client<Transport, TGenLayerChain>,
   "transport" | "getTransaction" | "readContract"
 > &
-  Omit<WalletActions<TSimulatorChain>, "deployContract" | "writeContract"> &
+  Omit<WalletActions<TGenLayerChain>, "deployContract" | "writeContract"> &
   Omit<
-    PublicActions<Transport, TSimulatorChain>,
+    PublicActions<Transport, TGenLayerChain>,
     "readContract" | "getTransaction" | "waitForTransactionReceipt"
   > & {
-    request: Client<Transport, TSimulatorChain>["request"] & {
+    request: Client<Transport, TGenLayerChain>["request"] & {
       <TMethod extends GenLayerMethod>(
         args: Extract<GenLayerMethod, {method: TMethod["method"]}>,
       ): Promise<unknown>;
@@ -42,10 +43,10 @@ export type GenLayerClient<TSimulatorChain extends SimulatorChain> = Omit<
       account?: Account;
       address: Address;
       functionName: string;
-      stateStatus?: TransactionStatus;
       args?: CalldataEncodable[];
       kwargs?: Map<string, CalldataEncodable> | {[key: string]: CalldataEncodable};
       rawReturn?: RawReturn;
+      transactionHashVariant?: TransactionHashVariant;
     }) => Promise<RawReturn extends true ? `0x${string}` : CalldataEncodable>;
     writeContract: (args: {
       account?: Account;
@@ -66,14 +67,14 @@ export type GenLayerClient<TSimulatorChain extends SimulatorChain> = Omit<
       consensusMaxRotations?: number;
     }) => Promise<`0x${string}`>;
     getTransaction: (args: {hash: TransactionHash}) => Promise<GenLayerTransaction>;
-    getCurrentNonce: (args: {address: string}) => Promise<number>;
+    getCurrentNonce: (args: {address: Address}) => Promise<number>;
     waitForTransactionReceipt: (args: {
       hash: TransactionHash;
       status?: TransactionStatus;
       interval?: number;
       retries?: number;
     }) => Promise<GenLayerTransaction>;
-    getContractSchema: (address: string) => Promise<ContractSchema>;
+    getContractSchema: (address: Address) => Promise<ContractSchema>;
     getContractSchemaForCode: (contractCode: string | Uint8Array) => Promise<ContractSchema>;
     initializeConsensusSmartContract: (forceReset?: boolean) => Promise<void>;
     connect: (network?: Network, snapSource?: SnapSource) => Promise<void>;

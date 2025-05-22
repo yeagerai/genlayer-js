@@ -2,7 +2,8 @@ import {Address, defineChain} from "viem";
 import {GenLayerChain} from "@/types";
 
 // chains/localnet.ts
-const SIMULATOR_JSON_RPC_URL = "http://127.0.0.1:4000/api";
+const SIMULATOR_JSON_RPC_URL = "https://studio.genlayer.com/api";
+const EXPLORER_URL = "https://genlayer-explorer.vercel.app";
 const CONSENSUS_MAIN_CONTRACT = {
   address: "0xb7278A61aa25c888815aFC32Ad3cC52fF24fE575" as Address,
   abi: [
@@ -3987,9 +3988,9 @@ const CONSENSUS_DATA_CONTRACT = {
   bytecode: "",
 };
 
-export const localnet: GenLayerChain = defineChain({
+export const studionet: GenLayerChain = defineChain({
   id: 61_999,
-  name: "Genlayer Localnet",
+  name: "Genlayer Studio Network",
   rpcUrls: {
     default: {
       http: [SIMULATOR_JSON_RPC_URL],
@@ -4003,7 +4004,7 @@ export const localnet: GenLayerChain = defineChain({
   blockExplorers: {
     default: {
       name: "GenLayer Explorer",
-      url: SIMULATOR_JSON_RPC_URL,
+      url: EXPLORER_URL,
     },
   },
   testnet: true,

@@ -2,9 +2,10 @@ import {Address, defineChain} from "viem";
 import {GenLayerChain} from "@/types";
 
 // chains/localnet.ts
-const SIMULATOR_JSON_RPC_URL = "http://127.0.0.1:4000/api";
+const TESTNET_JSON_RPC_URL = " http://34.32.169.58:9151";
+const EXPLORER_URL = "https://explorer-asimov.genlayer.com/";
 const CONSENSUS_MAIN_CONTRACT = {
-  address: "0xb7278A61aa25c888815aFC32Ad3cC52fF24fE575" as Address,
+  address: "0x174782d5819dD26F3d6967c995EE43db7DB824F8" as Address,
   abi: [
     {
       inputs: [],
@@ -3987,12 +3988,12 @@ const CONSENSUS_DATA_CONTRACT = {
   bytecode: "",
 };
 
-export const localnet: GenLayerChain = defineChain({
-  id: 61_999,
-  name: "Genlayer Localnet",
+export const testnetAsimov: GenLayerChain = defineChain({
+  id: 0x107d,
+  name: "Genlayer Asimov Testnet",
   rpcUrls: {
     default: {
-      http: [SIMULATOR_JSON_RPC_URL],
+      http: [TESTNET_JSON_RPC_URL],
     },
   },
   nativeCurrency: {
@@ -4002,8 +4003,8 @@ export const localnet: GenLayerChain = defineChain({
   },
   blockExplorers: {
     default: {
-      name: "GenLayer Explorer",
-      url: SIMULATOR_JSON_RPC_URL,
+      name: "GenLayer Asimov Explorer",
+      url: EXPLORER_URL,
     },
   },
   testnet: true,
