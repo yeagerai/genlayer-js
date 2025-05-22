@@ -79,4 +79,8 @@ export type GenLayerClient<TGenLayerChain extends GenLayerChain> = Omit<
     initializeConsensusSmartContract: (forceReset?: boolean) => Promise<void>;
     connect: (network?: Network, snapSource?: SnapSource) => Promise<void>;
     metamaskClient: (snapSource?: SnapSource) => Promise<MetaMaskClientResult>;
+    appealTransaction: (args: {
+      account?: Account;
+      txId: `0x${string}`;
+    }) => Promise<any>;
   };

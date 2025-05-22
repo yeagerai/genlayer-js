@@ -137,13 +137,19 @@ export const contractActions = (client: GenLayerClient<GenLayerChain>, publicCli
       } = args;
       const data = [calldata.encode(makeCalldataObject(functionName, callArgs, kwargs)), leaderOnly];
       const serializedData = serialize(data);
+      const senderAccount = account || client.account;
+      const encodedData = _encodeAddTransactionData({
+        client,
+        senderAccount,
+        recipient: address,
+        data: serializedData,
+        consensusMaxRotations,
+      });
       return _sendTransaction({
         client,
         publicClient,
-        recipient: address,
-        data: serializedData,
-        senderAccount: account || client.account,
-        consensusMaxRotations,
+        encodedData,
+        senderAccount,
         value,
       });
     },
@@ -169,68 +175,118 @@ export const contractActions = (client: GenLayerClient<GenLayerChain>, publicCli
         leaderOnly,
       ];
       const serializedData = serialize(data);
-      return _sendTransaction({
+      const senderAccount = account || client.account;
+      const encodedData = _encodeAddTransactionData({
         client,
-        publicClient: publicClient,
+        senderAccount,
         recipient: zeroAddress,
         data: serializedData,
-        senderAccount: account || client.account,
         consensusMaxRotations,
+      });
+      return _sendTransaction({
+        client,
+        publicClient,
+        encodedData,
+        senderAccount,
+      });
+    },
+    appealTransaction: async (args: {
+      account?: Account;
+      txId: `0x${string}`;
+    }) => {
+      const {account, txId} = args;
+      const senderAccount = account || client.account;
+      const encodedData = _encodeSubmitAppealData({client, txId});
+      return _sendTransaction({
+        client,
+        publicClient,
+        encodedData,
+        senderAccount,
       });
     },
   };
 };
 
-const _sendTransaction = async ({
-  client,
-  publicClient,
-  recipient,
-  data,
-  senderAccount,
-  consensusMaxRotations,
-  value,
-}: {
-  client: GenLayerClient<GenLayerChain>;
-  publicClient: PublicClient;
-  recipient: `0x${string}`;
-  data: `0x${string}`;
-  senderAccount?: Account;
-  consensusMaxRotations?: number;
-  value?: bigint;
-}) => {
-  if (!senderAccount) {
+const validateAccount = (Account?: Account): Account => {
+  if (!Account) {
     throw new Error(
       "No account set. Configure the client with an account or pass an account to this function.",
     );
   }
+  return Account;
+};
 
-  if (!client.chain.consensusMainContract?.address) {
-    throw new Error("Consensus main contract not initialized. Please ensure client is properly initialized.");
-  }
-
-  const encodedData = encodeFunctionData({
+const _encodeAddTransactionData = ({
+  client,
+  senderAccount,
+  recipient,
+  data,
+  consensusMaxRotations = client.chain.defaultConsensusMaxRotations,
+}: {
+  client: GenLayerClient<GenLayerChain>;
+  senderAccount?: Account;
+  recipient?: `0x${string}`;
+  data?: `0x${string}`;
+  consensusMaxRotations?: number;
+}): `0x${string}` => {
+  const validatedSenderAccount = validateAccount(senderAccount);
+  return encodeFunctionData({
     abi: client.chain.consensusMainContract?.abi as any,
     functionName: "addTransaction",
     args: [
-      senderAccount.address,
+      validatedSenderAccount.address,
       recipient,
       client.chain.defaultNumberOfInitialValidators,
       consensusMaxRotations,
       data,
     ],
   });
+};
 
-  const nonce = await client.getCurrentNonce({address: senderAccount.address});
+const _encodeSubmitAppealData = ({
+  client,
+  txId,
+}: {
+  client: GenLayerClient<GenLayerChain>;
+  txId: `0x${string}`;
+}): `0x${string}` => {
+  return encodeFunctionData({
+    abi: client.chain.consensusMainContract?.abi as any,
+    functionName: "submitAppeal",
+    args: [txId],
+  });
+};
+
+const _sendTransaction = async ({
+  client,
+  publicClient,
+  encodedData,
+  senderAccount,
+  value = 0n,
+}: {
+  client: GenLayerClient<GenLayerChain>;
+  publicClient: PublicClient;
+  encodedData: `0x${string}`;
+  senderAccount?: Account;
+  value?: bigint;
+}) => {
+  if (!client.chain.consensusMainContract?.address) {
+    throw new Error("Consensus main contract not initialized. Please ensure client is properly initialized.");
+  }
+
+  const validatedSenderAccount = validateAccount(senderAccount);
+
+  const nonce = await client.getCurrentNonce({address: validatedSenderAccount.address});
   const transactionRequest = await client.prepareTransactionRequest({
-    account: senderAccount,
+    account: validatedSenderAccount,
     to: client.chain.consensusMainContract?.address as Address,
     data: encodedData,
     type: "legacy",
     nonce: Number(nonce),
-    value: value ?? 0n,
+    value: value,
   });
 
-  if (senderAccount?.type !== "local") {
+  if (validatedSenderAccount?.type !== "local") {
     const formattedRequest = {
       from: transactionRequest.from,
       to: transactionRequest.to,
@@ -244,11 +300,11 @@ const _sendTransaction = async ({
     });
   }
 
-  if (!senderAccount?.signTransaction) {
+  if (!validatedSenderAccount?.signTransaction) {
     throw new Error("Account does not support signTransaction");
   }
 
-  const serializedTransaction = await senderAccount.signTransaction(transactionRequest);
+  const serializedTransaction = await validatedSenderAccount.signTransaction(transactionRequest);
 
   const txHash = await client.sendRawTransaction({serializedTransaction: serializedTransaction});
 
