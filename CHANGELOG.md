@@ -1,5 +1,12 @@
 
 
+## 0.10.0 (2025-05-22)
+
+
+### Features
+
+* adjust submitAppeal call to consensus smart contract ([#80](https://github.com/yeagerai/genlayer-js/issues/80)) ([9e4a88e](https://github.com/yeagerai/genlayer-js/commit/9e4a88ed9a094af067302f8c4aa170c7129bf53d))
+
 ## 0.9.5 (2025-05-21)
 
 
