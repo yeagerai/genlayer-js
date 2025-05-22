@@ -120,13 +120,17 @@ export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) 
     const {account, address, functionName, args: callArgs, kwargs, value = 0n, leaderOnly = false, consensusMaxRotations = client.chain.defaultConsensusMaxRotations} = args;
     const data = [calldata.encode(makeCalldataObject(functionName, callArgs, kwargs)), leaderOnly];
     const serializedData = serialize(data);
-    return _sendTransaction({
+    const senderAccount = account || client.account;
+    const encodedData = _encodeAddTransactionData({
+      senderAccount: senderAccount,
       recipient: address,
       data: serializedData,
-      senderAccount: account || client.account,
       consensusMaxRotations,
+    });
+    return _sendTransaction({
+      encodedData,
+      senderAccount,
       value,
-      appeal: false
     });
   };
 
@@ -141,12 +145,16 @@ export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) 
     const {account, code, args: constructorArgs, kwargs, leaderOnly = false, consensusMaxRotations = client.chain.defaultConsensusMaxRotations} = args;
     const data = [code, calldata.encode(makeCalldataObject(undefined, constructorArgs, kwargs)), leaderOnly];
     const serializedData = serialize(data);
-    return _sendTransaction({
+    const senderAccount = account || client.account;
+    const encodedData = _encodeAddTransactionData({
+      senderAccount: senderAccount,
       recipient: zeroAddress,
       data: serializedData,
-      senderAccount: account || client.account,
       consensusMaxRotations,
-      appeal: false
+    });
+    return _sendTransaction({
+      encodedData,
+      senderAccount,
     });
   };
 
@@ -155,76 +163,84 @@ export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) 
     txId: `0x${string}`;
   }) => {
     const {account, txId} = args;
+    const senderAccount = account || client.account;
+    const encodedData = _encodeSubmitAppealData(txId);
     return _sendTransaction({
-      senderAccount: account || client.account,
-      appeal: true,
-      txId
+      encodedData,
+      senderAccount,
     });
   };
 
-  const _sendTransaction = async ({
-    recipient,
-    data,
-    senderAccount,
-    consensusMaxRotations,
-    value,
-    appeal = false,
-    txId
-  }: {
-    recipient?: `0x${string}`,
-    data?: `0x${string}`,
-    senderAccount?: Account,
-    consensusMaxRotations?: number,
-    value?: bigint,
-    appeal?: boolean,
-    txId?: `0x${string}`
-  }) => {
-    if (!senderAccount) {
+  const validateAccount = (Account?: Account): Account => {
+    if (!Account) {
       throw new Error(
         "No account set. Configure the client with an account or pass an account to this function.",
       );
     }
+    return Account;
+  };
+
+  const _encodeAddTransactionData = ({
+    senderAccount,
+    recipient,
+    data,
+    consensusMaxRotations = client.chain.defaultConsensusMaxRotations,
+  }: {
+    senderAccount?: Account,
+    recipient?: `0x${string}`,
+    data?: `0x${string}`,
+    consensusMaxRotations?: number,
+  }): `0x${string}` => {
+    const validatedSenderAccount = validateAccount(senderAccount);
+    return encodeFunctionData({
+      abi: client.chain.consensusMainContract?.abi as any,
+      functionName: "addTransaction",
+      args: [
+        validatedSenderAccount.address,
+        recipient,
+        client.chain.defaultNumberOfInitialValidators,
+        consensusMaxRotations,
+        data,
+      ],
+    });
+  };
+
+  const _encodeSubmitAppealData = (txId: `0x${string}`): `0x${string}` => {
+    return encodeFunctionData({
+      abi: client.chain.consensusMainContract?.abi as any,
+      functionName: "submitAppeal",
+      args: [txId],
+    });
+  };
+
+  const _sendTransaction = async ({
+    encodedData,
+    senderAccount,
+    value = 0n,
+  }: {
+    encodedData: `0x${string}`,
+    senderAccount?: Account,
+    value?: bigint,
+  }) => {
+    const validatedSenderAccount = validateAccount(senderAccount);
 
     if (!client.chain.consensusMainContract?.address) {
       throw new Error(
         "Consensus main contract not initialized. Please ensure client is properly initialized.",
       );
     }
-
-    let encodedData: `0x${string}`;
-    if (appeal) {
-      encodedData = encodeFunctionData({
-        abi: client.chain.consensusMainContract?.abi as any,
-        functionName: "submitAppeal",
-        args: [
-          txId,
-        ],
-      });
-    } else {
-      encodedData = encodeFunctionData({
-        abi: client.chain.consensusMainContract?.abi as any,
-        functionName: "addTransaction",
-        args: [
-          senderAccount.address,
-          recipient,
-          client.chain.defaultNumberOfInitialValidators,
-          consensusMaxRotations,
-          data,
-        ],
-      });
-    }
-
-    const nonce = await client.getCurrentNonce({address: senderAccount.address});
+    
+    const nonce = await client.getCurrentNonce({address: validatedSenderAccount.address});
     const transactionRequest = await client.prepareTransactionRequest({
-      account: senderAccount,
+      account: validatedSenderAccount,
       to: client.chain.consensusMainContract?.address as Address,
       data: encodedData,
       type: "legacy",
       nonce,
-      value: value ?? 0n,
+      value,
     });
 
-    if (senderAccount?.type !== "local") {
+    if (validatedSenderAccount?.type !== "local") {
       const formattedRequest = {
         from: transactionRequest.from,
         to: transactionRequest.to,
@@ -238,11 +254,11 @@ export const overrideContractActions = (client: GenLayerClient<SimulatorChain>) 
       });
     }
 
-    if (!senderAccount?.signTransaction) {
+    if (!validatedSenderAccount?.signTransaction) {
       throw new Error("Account does not support signTransaction");
     }
 
-    const serializedTransaction = await senderAccount.signTransaction(transactionRequest);
+    const serializedTransaction = await validatedSenderAccount.signTransaction(transactionRequest);
 
     return client.sendRawTransaction({serializedTransaction: serializedTransaction});
   };
