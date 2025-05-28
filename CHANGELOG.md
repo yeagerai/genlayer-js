@@ -1,5 +1,12 @@
 
 
+## 0.11.0 (2025-05-28)
+
+
+### Features
+
+* also export studionet as genlayer chain ([#87](https://github.com/yeagerai/genlayer-js/issues/87)) ([a686581](https://github.com/yeagerai/genlayer-js/commit/a686581203d5a62db40526b66498f952ed2f7dcd))
+
 ## 0.10.0 (2025-05-22)
 
 
