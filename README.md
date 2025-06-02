@@ -22,9 +22,9 @@ To install the GenLayerJS SDK, use the following command:
 ```bash
 $ npm install genlayer-js
 ```
-Here’s how to initialize the client and connect to the GenLayer Simulator:
+Here's how to initialize the client and connect to the GenLayer Simulator:
 
-### Reading a Transaction
+### Basic Client Setup
 ```typescript
 import { localnet } from 'genlayer-js/chains';
 import { createClient } from "genlayer-js";
@@ -32,54 +32,180 @@ import { createClient } from "genlayer-js";
 const client = createClient({
   chain: localnet,
 });
-
-const transactionHash = "0x...";
-
-const transaction = await client.getTransaction({ hash: transactionHash })
 ```
 
-### Reading a contract
+### Transaction Operations
+
+#### Reading a Transaction
 ```typescript
-import { localnet } from 'genlayer-js/chains';
-import { createClient } from "genlayer-js";
+const transactionHash = "0x...";
+const transaction = await client.getTransaction({ hash: transactionHash });
+```
 
-const client = createClient({
-  chain: localnet,
+#### Waiting for Transaction Receipt
+```typescript
+import { TransactionStatus } from "genlayer-js";
+
+const receipt = await client.waitForTransactionReceipt({ 
+  hash: transactionHash, 
+  status: TransactionStatus.FINALIZED // or TransactionStatus.ACCEPTED
 });
+```
 
+### Contract Operations
+
+#### Reading from a Contract
+```typescript
 const result = await client.readContract({
-  // account: account, Account is optional when reading from contracts
+  // account: account, // Account is optional when reading from contracts
   address: contractAddress,
   functionName: 'get_complete_storage',
-  args: []
-  stateStatus: "accepted",
-})
+  args: [],
+  // Optional parameters:
+  transactionHashVariant: 'latest_final'
+});
 ```
 
-### Writing a transaction
+#### Writing to a Contract
 ```typescript
-import { localnet } from 'genlayer-js/chains';
-import { createClient, createAccount } from "genlayer-js";
-
-const client = createClient({
-  network: localnet,
-});
-
-const account = createAccount();
 const transactionHash = await client.writeContract({
   account: account, // using this account for this transaction
   address: contractAddress,
-  functionName: 'account',
+  functionName: 'update_storage',
   args: ['new_storage'],
-  value: 0, // value is optional, if you want to send some native token to the contract
+  value: 0n, // value in wei, optional
+  // Optional parameters:
+  consensusMaxRotations: 3
+});
+```
+
+#### Deploying a Contract
+```typescript
+const contractCode = "0x..."; // or Uint8Array
+const deployTxHash = await client.deployContract({
+  account: account,
+  code: contractCode,
+  args: ['constructor_arg1', 'constructor_arg2'], // constructor arguments
+  // Optional parameters:
+  consensusMaxRotations: 3
+});
+```
+
+#### Getting Contract Schema (Localnet only)
+```typescript
+// Get schema for deployed contract
+const schema = await client.getContractSchema(contractAddress);
+
+// Get schema for contract code before deployment
+const schemaFromCode = await client.getContractSchemaForCode(contractCode);
+```
+
+#### Appealing a Transaction
+```typescript
+const appealTxHash = await client.appealTransaction({
+  account: account,
+  txId: "0x..." // transaction ID to appeal
+});
+```
+
+### Account Operations
+
+#### Funding an Account (Localnet only)
+```typescript
+const fundTxHash = await client.fundAccount({
+  address: account.address,
+  amount: 1000 // amount to fund
+});
+```
+
+#### Getting Current Nonce
+```typescript
+const nonce = await client.getCurrentNonce({
+  address: account.address,
+  block: "latest" // optional, defaults to "latest"
+});
+```
+
+### Chain Operations
+
+#### Initialize Consensus Smart Contract
+```typescript
+// Initialize consensus contract (usually done automatically)
+await client.initializeConsensusSmartContract(false); // forceReset = false
+```
+
+### Wallet Integration
+
+#### Connect to MetaMask
+```typescript
+import { Network, SnapSource } from "genlayer-js";
+
+// Connect to wallet
+await client.connect(Network.TESTNET, SnapSource.NPM);
+
+// Get MetaMask client
+const metamaskClient = client.metamaskClient(SnapSource.NPM);
+```
+
+### Advanced Usage Examples
+
+#### Complete Contract Interaction Flow
+```typescript
+import { localnet } from 'genlayer-js/chains';
+import { createClient, createAccount, TransactionStatus } from "genlayer-js";
+
+const client = createClient({
+  chain: localnet,
 });
 
-const receipt = await client.waitForTransactionReceipt({ hash: txHash, status: TransactionStatus.FINALIZED}) //or ACCEPTED
+const account = createAccount();
 
+// Fund the account (localnet only)
+await client.fundAccount({
+  address: account.address,
+  amount: 1000
+});
+
+// Deploy a contract
+const contractCode = "0x...";
+const deployTxHash = await client.deployContract({
+  account: account,
+  code: contractCode,
+  args: ['initial_value']
+});
+
+// Wait for deployment to be finalized
+const deployReceipt = await client.waitForTransactionReceipt({
+  hash: deployTxHash,
+  status: TransactionStatus.FINALIZED
+});
+
+// Read from the deployed contract
+const result = await client.readContract({
+  address: deployReceipt.contractAddress,
+  functionName: 'get_value',
+  args: []
+});
+
+// Write to the contract
+const writeTxHash = await client.writeContract({
+  account: account,
+  address: deployReceipt.contractAddress,
+  functionName: 'set_value',
+  args: ['new_value'],
+  value: 0n
+});
+
+// Wait for write transaction to be accepted
+const writeReceipt = await client.waitForTransactionReceipt({
+  hash: writeTxHash,
+  status: TransactionStatus.ACCEPTED
+});
 ```
+
 ## 🚀 Key Features
 
-* **Client Creation**: Easily create and configure a client to connect to GenLayer’s network.
+* **Client Creation**: Easily create and configure a client to connect to GenLayer's network.
 * **Transaction Handling**: Send and manage transactions on the GenLayer network.
 * **Wallet Integration***: Seamless integration with MetaMask for managing user accounts.
 * **Gas Estimation***: Estimate gas fees for executing transactions on GenLayer.
@@ -89,8 +215,6 @@ _* under development_
 ## 📖 Documentation
 
 For detailed information on how to use GenLayerJS SDK, please refer to our [documentation](https://docs.genlayer.com/).
-
-
 
 ## Contributing
 
